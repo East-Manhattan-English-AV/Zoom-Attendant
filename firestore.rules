@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read access to authenticated attendants for participants collection
+    match /participants/{document=**} {
+      allow read: if request.auth != null;
+    }
+
+    match /pendingRegistrants/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Allow authenticated users to read their own attendant document
+    match /attendants/{attendantId} {
+      allow read: if request.auth != null && request.auth.uid == attendantId;
+    }
+    
+    // Allow creation of new attendant documents (for registration)
+    match /attendants/{attendantId} {
+      allow create: if request.resource.data.size() <= 10 &&
+                     request.resource.data.keys().hasAll(['id', 'name', 'emailAddress', 'congregationName', 'congregationID', 'dateRegistered']);
+    }
+  }
+}
