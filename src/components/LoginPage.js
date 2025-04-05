@@ -49,8 +49,8 @@ function LoginPage({ onLoginSuccess }) {
         console.log('Register button clicked');
         try {
             const id = uuidv4(); // Generate a unique ID for the registrant
-            setRegisterData({...registerData, id: id});
-            await db.collection('pendingRegistrants').add(registerData);
+            const updatedData = { ...registerData, id: id };
+            await db.collection('pendingRegistrants').add(updatedData);
             console.log('Registration submitted successfully:', registerData);
             alert('Registration submitted! Please wait for approval.');
             setIsRegistering(false);
