@@ -1,3 +1,33 @@
+# Zoom Attendant
+
+A web application for managing Zoom meeting participants.
+
+## Setup Instructions
+
+1. Install dependencies: `npm install`
+2. Update the Firebase configuration in `src/App.js` with your own Firebase credentials
+3. Run locally: `npm start`
+4. Build for production: `npm run build`
+5. Deploy to Firebase: `firebase deploy`
+
+## Firebase Setup
+
+1. Create a new Firebase project
+2. Enable Firestore Database
+3. Set up the collections: `attendants` and `participants`
+4. Install Firebase CLI: `npm install -g firebase-tools`
+5. Login to Firebase: `firebase login`
+6. Initialize Firebase in your project: `firebase init`
+7. Deploy your application: `firebase deploy`
+
+## Project Structure
+
+- `src/App.js`: Main application component
+- `src/components/`: React components for the application
+- `firebase.json`: Firebase configuration
+- `firestore.rules`: Security rules for Firestore
+- `firestore.indexes.json`: Indexes for Firestore queries
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
