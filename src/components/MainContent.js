@@ -47,7 +47,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                 </button>
             </div>
             <div className="tab-bar">
-                <NavBar user={user} activeTab={currentView} onTabChange={handleViewChange} tabs={allTabs} />
+                <NavBar user={user} activeTab={currentView} onTabChange={handleViewChange} tabs={availableTabs} />
             </div>
             <div className="main-content">
                 {renderView()}
