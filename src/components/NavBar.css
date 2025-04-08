@@ -1,0 +1,90 @@
+/* Container for the top navigation */
+.top-nav {
+  background-color: #fff;
+  padding: 10px 20px;
+  border-radius: 50px;  
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Navigation bar layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Tab bar styling */
+.tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.tab {
+  background-color: #efe9ea;
+  border: none;
+  border-radius: 25px; /* Pill shape */
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.tab:hover {
+  background-color: #a9adb2;
+}
+
+.tab.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* User menu styling */
+.user-menu {
+  position: relative;
+}
+
+/* Style the button containing the icon */
+.user-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* Style the user icon */
+.user-icon {
+    font-size: 24px;
+    /* Adjust size as needed */
+    color: #333;
+    /* Customize color */
+}
+
+/* Dropdown styling remains the same */
+.dropdown {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.dropdown a {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Divider below the navigation bar */
+.divider {
+    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+}

@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
+import Spinner from './components/Spinner';
 import LoginPage from './components/LoginPage';
 import SearchPage from './components/SearchPage';
+import MainContent from './components/MainContent';
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import {
   getDocs,
   getDoc,
@@ -13,10 +15,23 @@ import {
 import db from './firebaseConfig';
 
 function App() {
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  
+  const [userAccess, setUserAccess] = useState('none');
+  const [error, setError] = useState('');
+  const auth = getAuth();
+
+  const onLogout = () => {
+    signOut(auth).then(() => {
+      setUser(null);
+      setUserAccess('none');
+      console.log("User logged out");
+    }).catch((error) => {
+      setError(error);
+    });
+  };
+
   useEffect(() => {
-    const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         console.log("User is signed in.");
@@ -30,15 +45,19 @@ function App() {
           if (docSnap.exists()) {
             const loggedInUser = docSnap.data();
             setUser(loggedInUser);
+            setLoading(false);
             console.log("User logged in.");
           } else {
+            setLoading(false);
             console.log("No such document!");
           }
         } catch (error) {
+          setLoading(false);
           console.log("Error getting document:", error);
         }
       } else {
         // User is signed out.
+        setLoading(false);
         setUser(null);
       }
     });
@@ -46,14 +65,30 @@ function App() {
     // Clean up the listener on unmount
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      console.log("User state changed");
+
+      setUserAccess(user.access);
+
+    } else {
+      setUserAccess('none');
+    }
+  }, [user]);
+
+  if (loading) {
+    return <Spinner />;
+  }
   
+  if (!user) {
+    return <LoginPage />
+  }
+
   return (
-    <div className="App">
-      {user ? (
-        <SearchPage user={user} />
-      ) : (
-        <LoginPage/>
-      )}
+    <div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <MainContent user={user} userAccess={userAccess} onLogout={onLogout} />
     </div>
   );
 }
