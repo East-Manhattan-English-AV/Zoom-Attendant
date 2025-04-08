@@ -75,3 +75,475 @@ button:hover {
   display: block;
   color: #007bff;
 }
+
+/* Style the container to align the input and button */
+.search-input-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Style the input field */
+.search-input-container input {
+  flex: 1;
+  /* Take up available space */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  /* Rounded corners on the left */
+  outline: none;
+}
+
+/* Style the button */
+.search-input-container button {
+  padding: 8px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-left: none;
+  /* Remove border overlap with the input */
+  border-radius: 0 4px 4px 0;
+  /* Rounded corners on the right */
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Add hover effect for the button */
+.search-input-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Ensure the container takes up the full screen */
+.main-content-container {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* Full viewport height */
+  width: 100vw;
+  /* Full viewport width */
+  overflow: hidden;
+  /* Prevent scrolling */
+}
+
+/* Style the tab bar */
+.tab-bar {
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  /* border-bottom: 1px solid #ddd; */
+  padding: 10px;
+}
+
+/* Style individual tab buttons */
+.tab-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.tab-button.active {
+  border-bottom: 2px solid #007bff;
+  /* Highlight active tab */
+  color: #007bff;
+}
+
+.tab-button:hover {
+  color: #0056b3;
+}
+
+/* Style the main content area */
+.main-content {
+  background: #faf9f8;
+  flex: 1;
+  /* Take up remaining space */
+  overflow-y: auto;
+  /* Allow scrolling if content overflows */
+  padding: 10px;
+  background-color: #fff;
+}
+
+/* Style the participant list */
+.participant-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style each participant item */
+.participant-item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+/* Header for participant info */
+.participant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Name of the participant */
+.participant-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Info (phone and device) aligned to the right */
+.participant-info {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Red pill for "NOT ALLOWED" */
+.red-pill {
+  background-color: red;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+/* Overseer info below the name */
+.participant-overseer {
+  font-size: 14px;
+  color: #777;
+  margin-top: 5px;
+}
+
+/* Notes section at the bottom of the cell */
+.participant-notes {
+  font-size: 14px;
+  color: #333;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Highlight matching text */
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}
+
+/* Container for the header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  /* border-bottom: 1px solid #ddd; */
+}
+
+/* Style for the username */
+.user-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Style for the logout button */
+.logout-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #0056b3;
+}
+
+/* Add this to your App.css or create a new spreadsheetImporter.css file */
+.spreadsheet-importer {
+  /* background: white; */
+  /* border-radius: 8px; */
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  padding: 8px;
+  margin: 20px 0;
+}
+s
+.spreadsheet-importer h2 {
+  color: #2b5797;
+  margin-top: 0;
+}
+
+.import-controls {
+  margin-top: 20px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.button-group .button,
+.button-group button {
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+.file-button {
+  background-color: #f0f2f5;
+  border: 1px solid #ddd;
+  color: #333;
+  display: inline-block;
+}
+
+.file-button:hover {
+  background-color: #e4e6e9;
+}
+
+.import-button {
+  background-color: #2b5797;
+  color: white;
+}
+
+.import-button:hover:not(:disabled) {
+  background-color: #1e3a6a;
+}
+
+.template-button {
+  background-color: #f0f2f5;
+  color: #2b5797;
+  border: 1px solid #2b5797 !important;
+}
+
+.template-button:hover:not(:disabled) {
+  background-color: #e4e6e9;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #f0f2f5;
+  border-radius: 10px;
+  margin: 15px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #2b5797;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.error-message {
+  padding: 10px;
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.results-summary {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.results-summary h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.results-stats div {
+  padding: 8px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.failures {
+  margin-top: 20px;
+}
+
+.failures table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.failures th,
+.failures td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.failures th {
+  background-color: #f5f5f5;
+}
+
+.failures tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.view-switcher {
+  display: flex;
+  gap: 10px;
+  margin: 0 20px;
+}
+
+.view-switcher button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  color: #2b5797;
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.view-switcher button.active {
+  border-bottom-color: #2b5797;
+}
+
+.view-switcher button:hover {
+  border-bottom-color: #c5d5ef;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.file-select-button {
+  background-color: #f0f2f5;
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.file-select-button:hover:not(:disabled) {
+  background-color: #e4e6e9;
+}
+
+.selected-file {
+  padding: 6px 10px;
+  background-color: #e8f5e9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.filename {
+  font-weight: 600;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  background: none;
+  color: black;
+  border: none;
+  /* font-size: 24px; */
+  cursor: pointer;
+}
+
+.save-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background: #0056b3;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-body form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.modal-body textarea {
+  resize: none;
+  height: 80px;
+}
