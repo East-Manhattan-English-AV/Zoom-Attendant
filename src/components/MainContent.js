@@ -42,13 +42,14 @@ const MainContent = ({ user, userAccess, onLogout }) => {
         <div className="main-content-container">
             <div className="header">
                 <span className="user-name">Hi, {user.name || 'Attendant'}!</span>
+                <div className="tab-bar">
+                    <NavBar user={user} activeTab={currentView} onTabChange={handleViewChange} tabs={availableTabs} />
+                </div>
                 <button className="logout-button" onClick={onLogout}>
                     Logout
                 </button>
             </div>
-            <div className="tab-bar">
-                <NavBar user={user} activeTab={currentView} onTabChange={handleViewChange} tabs={availableTabs} />
-            </div>
+            
             <div className="main-content">
                 {renderView()}
             </div>

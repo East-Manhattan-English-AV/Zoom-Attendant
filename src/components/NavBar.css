@@ -1,9 +1,8 @@
 /* Container for the top navigation */
 .top-nav {
-  background-color: #fff;
+  background-color: #f0edee;
   padding: 10px 20px;
   border-radius: 50px;  
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Navigation bar layout */
@@ -20,13 +19,14 @@
 }
 
 .tab {
-  background-color: #efe9ea;
+  background-color: transparent;
   border: none;
   border-radius: 25px; /* Pill shape */
-  padding: 8px 16px;
+  /* padding: 8px 16px; */
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s;
+  /* transition: background-color 0.3s; */
+  color: black;
 }
 
 .tab:hover {

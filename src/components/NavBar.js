@@ -34,17 +34,6 @@ const NavBar = ({ user, activeTab, onTabChange, tabs }) => {
                         </button>
                     ))}
                 </div>
-                {/* <div className="user-menu" ref={userMenuRef}>
-                    <button className="user-btn" onClick={toggleDropdown}>
-                        <FaUser className="user-icon" />
-                    </button>
-                    {dropdownOpen && (
-                        <div className="dropdown">
-                            <a href="/profile">Profile</a>
-                            <a href="/logout">Logout</a>
-                        </div>
-                    )}
-                </div> */}
             </nav>
         </div>
     );
