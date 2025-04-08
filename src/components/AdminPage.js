@@ -101,9 +101,9 @@ function AdminPage () {
                                     {group.map((participant) => (
                                         <li key={participant.id}>
                                             {participant.name} - {participant.phone} - {participant.device}
-                                            <button onClick={() => openEditModal(participant, group)}>
+                                            {/* <button onClick={() => openEditModal(participant, group)}>
                                                 Edit
-                                            </button>
+                                            </button> */}
                                         </li>
                                     ))}
                                 </ul>
