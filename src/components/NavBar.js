@@ -1,25 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUser } from 'react-icons/fa'; // Import the user icon
 import './NavBar.css';
 
-const NavBar = ({ user, activeTab, onTabChange, tabs }) => {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const userMenuRef = useRef(null);
-
-    const toggleDropdown = () => {
-        setDropdownOpen((prev) => !prev);
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-                setDropdownOpen(false);
-            }
-        };
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, []);
-
+const NavBar = ({ activeTab, onTabChange, tabs }) => {
     return (
         <div className="top-nav">
             <nav className="navbar">
