@@ -16,6 +16,14 @@
 .tabs {
   display: flex;
   gap: 10px;
+  /* Use flexbox for layout */
+  align-items: center;
+  /* Align items vertically */
+  justify-content: center;
+  width: 100%;
+  /* Ensure the container spans the full width */
+  height: 35px;
+  /* Set a fixed height for the container */
 }
 
 .tab {
@@ -34,8 +42,23 @@
 }
 
 .tab.active {
-  background-color: #007bff;
-  color: #fff;
+  background-color: transparent;
+  color: black;
+  font-weight: bold;
+}
+
+.tab-divider {
+  display: inline-block;
+  width: 1px;
+  /* Thin vertical line */
+  height: auto;
+  /* Allow the divider to stretch */
+  background-color: #ccc;
+  /* Divider color */
+  align-self: stretch;
+  /* Stretch to match the height of the parent container */
+  margin: 0;
+  /* Remove extra spacing */
 }
 
 /* User menu styling */

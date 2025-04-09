@@ -112,7 +112,7 @@ button:hover {
 
 /* Add hover effect for the button */
 .search-input-container button:hover {
-  background-color: #0056b3;
+  background-color: #b33300;
 }
 
 /* Ensure the container takes up the full screen */
@@ -132,9 +132,14 @@ button:hover {
 .tab-bar {
   display: flex;
   justify-content: center;
+  align-items: center;
+    /* Center the tabs vertically */
   background-color: #fff;
   /* border-bottom: 1px solid #ddd; */
   padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  /* Include padding in the width */
 }
 
 /* Style individual tab buttons */
@@ -254,7 +259,7 @@ button:hover {
 }
 
 /* Style for the logout button */
-.logout-button {
+/* .logout-button {
   padding: 8px 16px;
   font-size: 14px;
   color: black;
@@ -263,11 +268,20 @@ button:hover {
   border-radius: 25px;
   cursor: pointer;
   transition: background-color 0.3s;
-}
+} */
+ .logout-button {
+   padding: 8px 16px;
+   font-size: 14px;
+   color: black;
+   background-color: white;
+   border: none;
+   border-radius: 8px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+ }
 
 .logout-button:hover {
-  color: white;
-  background-color: #0056b3;
+  background-color: #a9adb2;
 }
 
 /* Add this to your App.css or create a new spreadsheetImporter.css file */
