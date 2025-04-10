@@ -4,19 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-console.log('index.js starting to execute');
-
 try {
-  console.log('Attempting to initialize React');
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
   );
-  console.log('Zoom Attendant initialized successfully');
+  console.log('Zoom Attendant app started');
 } catch (error) {
-  console.error('Zoom Attendant initialization failed:', error);
+  console.error('Zoom Attendant failed to start:', error);
 
   // Show error visibly on page
   try {

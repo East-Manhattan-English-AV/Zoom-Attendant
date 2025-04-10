@@ -4,7 +4,6 @@ import db from '../firebaseConfig';
 import SpreadsheetImporter from './SpreadsheetImporter';
 
 function AdminPage () {
-    const [participants, setParticipants] = useState([]);
     const [duplicates, setDuplicates] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -23,7 +22,6 @@ function AdminPage () {
             snapshot.forEach((doc) => {
                 participants.push({ id: doc.id, ...doc.data() });
             });
-            setParticipants(participants);
 
             // Find duplicates based on specific fields (e.g., name, phone, or device)
             const duplicatesMap = {};
@@ -45,12 +43,6 @@ function AdminPage () {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Open the modal to edit a participant
-    const openEditModal = (participant, group) => {
-        setEditingParticipant(participant);
-        setOtherDuplicates(group.filter((p) => p.id !== participant.id)); // Exclude the selected participant
     };
 
     // Close the modal

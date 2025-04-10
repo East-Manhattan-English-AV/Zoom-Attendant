@@ -1,11 +1,4 @@
 import React, { useState } from 'react';
-import db from '../firebaseConfig';
-import { v4 as uuidv4 } from 'uuid';
-import {
-    collection,
-    addDoc,
-    serverTimestamp,
-} from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginPage() {

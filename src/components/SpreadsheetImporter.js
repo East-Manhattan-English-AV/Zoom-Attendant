@@ -2,13 +2,9 @@ import React, { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import db from '../firebaseConfig';
 import {
+    doc,
     collection,
     getDocs,
-    addDoc,
-    updateDoc,
-    doc,
-    query,
-    where,
     writeBatch
 } from 'firebase/firestore';
 
@@ -61,18 +57,6 @@ const SpreadsheetImporter = () => {
             allowInfo: allowInfoKey ? row[allowInfoKey] : '',
             overseer: overseerKey ? row[overseerKey] : '',
             notes: notesKey ? row[notesKey] : ''
-        };
-        
-        return {
-            name: row['Name'] || row['name'] || row['Name (First, Last)'] || '',
-            phone: row['Phone Number'] || row['phoneNumber'] || row['Phone'] || row['Phone/Add. Phone'] || '',
-            device: row['Device'] || row['device'] || '',
-            allow: row['Allowed'] === true || row['Can Be Admitted'] === 'Yes' || row['canBeAdmitted'] === true || false,
-            allowInfo: row['Allowance Info'] || row['Admittance Info'] || row['admittanceInfo'] || '',
-            overseer: row['Overseer'] || row['overseer'] || '',
-            // approvedBy: row['Approved By'] || row['approvedBy'] || '',
-            // dateAdded: row['Date Added'] ? new Date(row['Date Added']) : new Date(),
-            notes: row['Notes'] || row['notes'] || row['Note'] || row['note'] || ''
         };
     };
 
@@ -236,31 +220,6 @@ const SpreadsheetImporter = () => {
         return results;
     };
 
-    // Download a template spreadsheet
-    const downloadTemplate = () => {
-        // Create a template worksheet
-        const template = [
-            {
-                'Name': 'John Smith',
-                'Phone Number': '123-456-7890',
-                'Device': 'iPhone 13',
-                'Can Be Admitted': 'Yes',
-                'Admittance Info': 'Regular attendee',
-                'Overseer': 'Elder Mike',
-                // 'Approved By': 'Brother James',
-                // 'Date Added': new Date().toISOString().split('T')[0],
-                'Notes': 'Example participant'
-            }
-        ];
-
-        const worksheet = XLSX.utils.json_to_sheet(template);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Participants');
-
-        // Generate and download the file
-        XLSX.writeFile(workbook, 'participant_template.xlsx');
-    };
-
     return (
         <div className="spreadsheet-importer">
             <body>Import Participants</body>
@@ -302,15 +261,6 @@ const SpreadsheetImporter = () => {
                     >
                         {importing ? 'Importing...' : 'Import Spreadsheet'}
                     </button>
-
-                    {/* Template download button */}
-                    {/* <button
-                        onClick={downloadTemplate}
-                        className="template-button"
-                        disabled={importing}
-                    >
-                        Download Template
-                    </button> */}
                 </div>
 
                 {/* Rest of your component */}

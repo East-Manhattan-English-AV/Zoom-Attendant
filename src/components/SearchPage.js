@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import db from '../firebaseConfig';
-import { collection, query, orderBy, where, onSnapshot } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
-function SearchPage({ user }) {
+function SearchPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [allParticipants, setAllParticipants] = useState([]); // Store all participants
     const [filteredParticipants, setFilteredParticipants] = useState([]); // Store filtered participants
@@ -12,13 +12,11 @@ function SearchPage({ user }) {
         const fetchAllParticipants = async () => {
             try {
                 const q = query(collection(db, "participants"), orderBy('device', 'asc'));
-                const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                    console.log("Current participants fetched.")
+                onSnapshot(q, (querySnapshot) => {
                     const participants = [];
                     querySnapshot.forEach((doc) => {
                         participants.push(doc.data().name);
                     });
-                    console.log("Participants: ", participants);
                     const allParticipants = querySnapshot.docs.map((doc) => ({
                         id: doc.id,
                         ...doc.data(),
