@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import db from '../firebaseConfig';
 import {
+    doc,
     collection,
     getDocs,
     writeBatch
