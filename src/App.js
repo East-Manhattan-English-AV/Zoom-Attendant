@@ -1,14 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Spinner from './components/Spinner';
 import LoginPage from './components/LoginPage';
-import SearchPage from './components/SearchPage';
 import MainContent from './components/MainContent';
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import {
-  getDocs,
-  getDoc,
   getDocFromServer,
   doc
 } from 'firebase/firestore';
