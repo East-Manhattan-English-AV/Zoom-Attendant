@@ -61,7 +61,7 @@ function App() {
 
     // Clean up the listener on unmount
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     if (user) {
