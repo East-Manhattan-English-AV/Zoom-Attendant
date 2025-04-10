@@ -13,12 +13,10 @@ function SearchPage() {
             try {
                 const q = query(collection(db, "participants"), orderBy('device', 'asc'));
                 onSnapshot(q, (querySnapshot) => {
-                    console.log("Current participants fetched.")
                     const participants = [];
                     querySnapshot.forEach((doc) => {
                         participants.push(doc.data().name);
                     });
-                    console.log("Participants: ", participants);
                     const allParticipants = querySnapshot.docs.map((doc) => ({
                         id: doc.id,
                         ...doc.data(),
