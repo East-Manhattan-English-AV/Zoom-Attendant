@@ -72,6 +72,15 @@ function App() {
     return <LoginPage />
   }
 
+  if (userAccess === 'none') {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '20px', color: 'red' }}>
+        <p>You must have access to use this app. Contact your overseer to request access.</p>
+        <button className="logout-button" onClick={onLogout}>Logout</button>
+      </div>
+    );
+  }
+
   return (
     <div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
