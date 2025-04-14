@@ -311,7 +311,7 @@ s
 .button-group .button,
 .button-group button {
   padding: 10px 15px;
-  border-radius: 4px;
+  border-radius: 25spx;
   cursor: pointer;
   font-size: 14px;
   border: none;
@@ -562,4 +562,124 @@ button:disabled {
 .modal-body textarea {
   resize: none;
   height: 80px;
+}
+
+/* Container for ZoomClient and SearchPage */
+.content-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  /* Ensure it takes up the full height */
+  width: 100%;
+  /* Ensure it takes up the full width */
+}
+
+/* ZoomClient view on the left */
+.zoom-view {
+  flex: 1;
+  /* Take up 1 part of the available space */
+  border-right: 1px solid #ccc;
+  /* Optional: Add a divider */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* SearchPage view on the right */
+.search-view {
+  flex: 2;
+  /* Take up 2 parts of the available space */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.zoom-form-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.zoom-form-overlay h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-button,
+.connect-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #bbb;
+}
+
+.connect-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.connect-button:hover {
+  background-color: #0056b3;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+  position: relative;
+}
+
+#meetingSDKElement {
+  margin-left: auto;
+  margin-right: auto;
+  flex: 2;
+    /* Take up 2 parts of the available space */
+  padding: 10px;
+  box-sizing: border-box;
 }

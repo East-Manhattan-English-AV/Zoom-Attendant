@@ -1,0 +1,33 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "participants",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "name",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "device",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "attendants",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "id",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "congregationID",
+                    "order": "ASCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}
