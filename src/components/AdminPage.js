@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import SpreadsheetImporter from './SpreadsheetImporter';
@@ -16,6 +16,9 @@ function AdminPage() {
     const [attendants, setAttendants] = useState([]);
     const [editingAttendantRecord, setEditingAttendantRecord] = useState(null);
     const [editAttendant, setEditAttendant] = useState(false);
+
+    // Use useMemo to stabilize the editingAttendantRecord object
+    const stableAttendant = useMemo(() => editingAttendantRecord, [editingAttendantRecord]);
 
     // Function to fetch attendants from Firestore
     const fetchAttendants = async () => {
@@ -235,7 +238,7 @@ function AdminPage() {
                         </div>
                         <div className="modal-body">
                             <EditAttendant
-                                attendant={editingAttendantRecord}
+                                attendant={stableAttendant} // Pass the memoized object
                                 onCancel={closeEditAttendantModal}
                                 onUpdate={handleAttendantUpdate}
                             />
