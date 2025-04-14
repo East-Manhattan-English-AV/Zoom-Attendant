@@ -665,3 +665,21 @@ button:disabled {
 .connect-button:hover {
   background-color: #0056b3;
 }
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+  position: relative;
+}
+
+#meetingSDKElement {
+  margin-left: auto;
+  margin-right: auto;
+  flex: 2;
+    /* Take up 2 parts of the available space */
+  padding: 10px;
+  box-sizing: border-box;
+}

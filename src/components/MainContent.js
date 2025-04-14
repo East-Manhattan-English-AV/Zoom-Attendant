@@ -10,13 +10,14 @@ const MainContent = ({ user, userAccess, onLogout }) => {
         { key: 'admin', label: 'Admin' },
     ]
 
-    const authEndpoint = "https://zoom-attendant-meeting-auth.web.app";
+    const authEndpoint = "https://zoom-meeting-sdk-auth-sample-tcz5.onrender.com";
     const sdkKey = "IHOzSYcT0OCno8mVQvVRA";
     const role = 0;
     const userName = "Zoom Attendant";
     const [showZoomForm, setShowZoomForm] = useState(false);
     const [meetingID, setMeetingID] = useState('');
     const [passcode, setPasscode] = useState('');
+    const [zoomConnected, setZoomConnected] = useState(false);
     const client = ZoomMtgEmbedded.createClient();
 
     // Filter tabs based on userRole
@@ -37,7 +38,6 @@ const MainContent = ({ user, userAccess, onLogout }) => {
 
     // Handler for the "Connect" button
     const handleConnect = async () => {
-        console.log('Connecting to meeting:', meetingID, passcode);
         connectZoom(); // Call the connectZoom function to initialize the Zoom client
         setShowZoomForm(false); // Hide the form
     };
@@ -53,8 +53,10 @@ const MainContent = ({ user, userAccess, onLogout }) => {
             case 'search':
                 return (
                     <div className="content-container">
-                        <div id="meetingSDKElement">
-                            {/* <!-- Meeting SDK renders here when a user starts or joins a Zoom meeting --> */}
+                        <div>
+                            <div id="meetingSDKElement"></div>
+                            <div id="meetingSDKParticipantsElement"></div>
+                            <div id="meetingSDKChatElement"></div>
                         </div>
                         <div className="search-view">
                             <SearchPage user={user} />
@@ -90,20 +92,60 @@ const MainContent = ({ user, userAccess, onLogout }) => {
         getSignature();
     };
 
-    const startMeeting = async (signature) => {
-        const meetingSDKElement = document.getElementById('meetingSDKElement');
+    const disconnectZoom = async () => {
         try {
-            await client.init({ zoomAppRoot: meetingSDKElement, language: 'en-US' })
-
-            await client.join({
-                signature: signature,
-                sdkKey: sdkKey,
-                meetingNumber: meetingID,
-                userName: userName,
-                passWord: passcode
-            });
+            // Use the client.leave() method to disconnect
+            await client.leaveMeeting();
+            setZoomConnected(false);
+            console.log('Left meeting successfully!');
         } catch (error) {
-            console.log(error);
+            console.log('Error disconnecting from meeting:', error);
+        }
+    };
+
+    const startMeeting = async (signature) => {
+        const meetingPassWord = passcode;
+        const meetingSDKElement = document.getElementById('meetingSDKElement');
+        const meetingSDKChatElement = document.getElementById('meetingSDKChatElement');
+        const meetingSDKParticipantsElement = document.getElementById('meetingSDKParticipantsElement')
+        try {
+            await client.init({
+                zoomAppRoot: meetingSDKElement,
+                language: 'en-US',
+                customize: {
+                    video: {
+                        popper: {
+                            disableDraggable: false
+                        }
+                    },
+                    participants: {
+                        popper: {
+                            disableDraggable: false,
+                            anchorElement: meetingSDKParticipantsElement,
+                            placement: 'bottom'
+                        }
+                    },
+                    chat: {
+                        popper: {
+                            disableDraggable: false,
+                            anchorElement: meetingSDKChatElement,
+                            placement: 'bottom'
+                        }
+                    }
+                }
+            });
+            await client.join({
+                sdkKey: sdkKey,
+                signature: signature,
+                meetingNumber: meetingID,
+                password: meetingPassWord,
+                userName: userName
+            });
+            setZoomConnected(true);
+            console.log('Joined meeting successfully!');
+        } catch (error) {
+            setZoomConnected(false);
+            console.log('Error joining meeting:', error);
         }
     };
 
@@ -119,7 +161,15 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                         tabs={availableTabs}
                     />
                 </div>
-                <button onClick={() => setShowZoomForm(true)}>Connect Zoom</button>
+                <button onClick={() => {
+                    if (zoomConnected) {
+                        disconnectZoom(); // Disconnect if already connected
+                    } else {
+                        setShowZoomForm(true); // Show form to connect if not connected
+                    }
+                }}>
+                    {zoomConnected ? "Disconnect Zoom" : "Connect Zoom"}
+                </button>
                 <button className="logout-button" onClick={onLogout}>
                     Logout
                 </button>
