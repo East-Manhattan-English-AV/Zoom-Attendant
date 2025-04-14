@@ -2,41 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import SpreadsheetImporter from './SpreadsheetImporter';
+import EditAttendant from './EditAttendant';  // Import the editing component
 
-function AdminPage () {
+function AdminPage() {
+    // State for managing duplicates (existing)
     const [duplicates, setDuplicates] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [editingParticipant, setEditingParticipant] = useState(null); // Participant being edited
-    const [otherDuplicates, setOtherDuplicates] = useState([]); // Other duplicates in the group
+    const [editingParticipant, setEditingParticipant] = useState(null);
+    const [otherDuplicates, setOtherDuplicates] = useState([]);
 
-    // Function to check for duplicates in Firestore
+    // NEW: State for fetching all attendants and editing one
+    const [attendants, setAttendants] = useState([]);
+    const [editingAttendantRecord, setEditingAttendantRecord] = useState(null);
+    const [editAttendant, setEditAttendant] = useState(false);
+
+    // Function to fetch attendants from Firestore
+    const fetchAttendants = async () => {
+        try {
+            const attendantsRef = collection(db, 'authorizedUsers');
+            const snapshot = await getDocs(attendantsRef);
+            const attendantsData = [];
+            snapshot.forEach((doc) => {
+                attendantsData.push({ id: doc.id, ...doc.data() });
+            });
+            setAttendants(attendantsData);
+        } catch (err) {
+            setError('Error fetching attendants: ' + err.message);
+        }
+    };
+
+    // Function to check for duplicates in Firestore (existing)
     const checkForDuplicates = async () => {
         setLoading(true);
         setError('');
         try {
             const participantsRef = collection(db, 'participants');
             const snapshot = await getDocs(participantsRef);
-
             const participants = [];
             snapshot.forEach((doc) => {
                 participants.push({ id: doc.id, ...doc.data() });
             });
-
-            // Find duplicates based on specific fields (e.g., name, phone, or device)
             const duplicatesMap = {};
             participants.forEach((participant) => {
-                const key = `${participant.name}-${participant.phone}-${participant.device}`; // Combine fields to create a unique key
+                const key = `${participant.name}-${participant.phone}-${participant.device}`;
                 if (duplicatesMap[key]) {
                     duplicatesMap[key].push(participant);
                 } else {
                     duplicatesMap[key] = [participant];
                 }
             });
-
-            // Filter out keys with only one entry (no duplicates)
             const duplicateEntries = Object.values(duplicatesMap).filter((entries) => entries.length > 1);
-
             setDuplicates(duplicateEntries);
         } catch (err) {
             setError('Error checking for duplicates: ' + err.message);
@@ -45,21 +61,18 @@ function AdminPage () {
         }
     };
 
-    // Close the modal
+    // Close the participant modal (existing)
     const closeEditModal = () => {
         setEditingParticipant(null);
         setOtherDuplicates([]);
     };
 
-    // Save the updated participant information
+    // Save updated participant (existing)
     const saveParticipant = async () => {
         if (!editingParticipant) return;
-
         try {
             const participantRef = doc(db, 'participants', editingParticipant.id);
             await updateDoc(participantRef, editingParticipant);
-
-            // Refresh duplicates after saving
             checkForDuplicates();
             closeEditModal();
         } catch (err) {
@@ -67,12 +80,49 @@ function AdminPage () {
         }
     };
 
+    // Callback to close the EditAttendant modal
+    const closeEditAttendantModal = () => {
+        setEditingAttendantRecord(null);
+        setEditAttendant(false);
+    };
+
+    const handleEditAttendant = (attendant) => {
+        setEditingAttendantRecord(attendant);
+        setEditAttendant(true);
+    };
+
+    // Callback to update attendant in Firestore is handled inside EditAttendant.
+    // Here we simply re-fetch attendants after the update.
+    const handleAttendantUpdate = () => {
+        closeEditAttendantModal();
+        fetchAttendants();
+    };
+
     useEffect(() => {
         checkForDuplicates();
+        fetchAttendants();
     }, []);
 
     return (
         <div className="admin-panel">
+            <section>
+                <h2>Attendants</h2>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {attendants.length > 0 ? (
+                    <ul>
+                        {attendants.map((attendant) => (
+                            <li key={attendant.id}>
+                                <button key={attendant.id} onClick={() => handleEditAttendant(attendant)}>
+                                    {attendant.name} - {attendant.email} - {attendant.access}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No attendants found.</p>
+                )}
+            </section>
+
             <section>
                 <h2>Import Participants</h2>
                 <p>Upload a spreadsheet to import participants. Note: Ensure the spreadsheet is formatted correctly. Supported formats: .xlsx, .csv.</p>
@@ -91,9 +141,6 @@ function AdminPage () {
                                     {group.map((participant) => (
                                         <li key={participant.id}>
                                             {participant.name} - {participant.phone} - {participant.device}
-                                            {/* <button onClick={() => openEditModal(participant, group)}>
-                                                Edit
-                                            </button> */}
                                         </li>
                                     ))}
                                 </ul>
@@ -170,6 +217,28 @@ function AdminPage () {
                                     </li>
                                 ))}
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {editAttendant && (
+                <div
+                    className="modal-overlay"
+                    onClick={closeEditAttendantModal}
+                >
+                    <div
+                        className="modal"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="modal-header">
+                            <h3>Edit Attendant</h3>
+                        </div>
+                        <div className="modal-body">
+                            <EditAttendant
+                                attendant={editingAttendantRecord}
+                                onCancel={closeEditAttendantModal}
+                                onUpdate={handleAttendantUpdate}
+                            />
                         </div>
                     </div>
                 </div>
