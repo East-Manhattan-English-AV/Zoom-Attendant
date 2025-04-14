@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
 function EditAttendant({ attendant, onCancel, onUpdate }) {
-    // Initialize state from props but don't make it dependent on props
     const [formData, setFormData] = useState({
-        name: attendant?.name || '',
-        email: attendant?.email || '',
-        access: attendant?.access || 'none'
+        name: '',
+        email: '',
+        access: 'none'
     });
+
+    // Synchronize formData with the attendant prop only when the ID changes
+    useEffect(() => {
+        if (attendant?.id) {
+            setFormData({
+                name: attendant.name || '',
+                email: attendant.email || '',
+                access: attendant.access || 'none'
+            });
+        }
+    }, [attendant?.id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
