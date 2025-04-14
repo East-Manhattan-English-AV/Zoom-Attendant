@@ -75,9 +75,7 @@ function AdminPage () {
         <div className="admin-panel">
             <section>
                 <h2>Import Participants</h2>
-                <p>Upload a spreadsheet to import participants.</p>
-                <p>Note: Ensure the spreadsheet is formatted correctly.</p>
-                <p>Supported formats: .xlsx, .csv</p>
+                <p>Upload a spreadsheet to import participants. Note: Ensure the spreadsheet is formatted correctly. Supported formats: .xlsx, .csv.</p>
                 <SpreadsheetImporter /> 
             </section>
             <section>
