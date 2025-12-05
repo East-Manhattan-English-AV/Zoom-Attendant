@@ -168,6 +168,16 @@ function SearchPage({ userAccess }) {
                         </button>
                     )}
                 </div>
+                {searchTerm && (
+                    <p style={{
+                        fontSize: '13px',
+                        color: '#6b7280',
+                        marginTop: '4px',
+                        marginBottom: '0'
+                    }}>
+                        Keyboard shortcut: Press Shift + Delete/Backspace to quickly remove all text
+                    </p>
+                )}
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <div className="results">
