@@ -111,6 +111,15 @@ function SearchPage({ userAccess }) {
     const clearSearch = () => {
         setSearchTerm('');
     };
+
+    // Handle keyboard shortcut: Shift + Delete/Backspace to clear search
+    const handleKeyDown = (e) => {
+        if (e.shiftKey && (e.key === 'Delete' || e.key === 'Backspace')) {
+            e.preventDefault();
+            clearSearch();
+        }
+    };
+
     // Render edit view if editing, otherwise render search view
     if (isEditingParticipant && selectedParticipant) {
         return (
@@ -131,6 +140,7 @@ function SearchPage({ userAccess }) {
                         placeholder="Search Participants…"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         style={{ paddingRight: searchTerm ? '40px' : '12px' }}
                     />
                     {searchTerm && (
