@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import SearchPage from './SearchPage';
 import NavBar from './NavBar';
-import AdminPage from './AdminPage';
 import AdvancedPage from './AdvancedPage';
 import AttendantsPage from './AttendantsPage';
 // import ZoomMtgEmbedded from '@zoom/meetingsdk/embedded';
@@ -10,7 +9,6 @@ const MainContent = ({ user, userAccess, onLogout }) => {
     const allTabs = [
         { key: 'search', label: 'Participants' },
         { key: 'attendants', label: 'Attendants' },
-        { key: 'admin', label: 'Admin' },
         { key: 'advanced', label: 'Advanced' },
     ]
 
@@ -26,8 +24,8 @@ const MainContent = ({ user, userAccess, onLogout }) => {
 
     // Filter tabs based on userRole
     const availableTabs = allTabs.filter((tab) => {
-        if (tab.key === 'admin' || tab.key === 'attendants') {
-            return userAccess === 'admin'; // Only show admin and attendants tabs for admin users
+        if (tab.key === 'attendants') {
+            return userAccess === 'admin'; // Only show attendants tab for admin users
         }
         return true;
     });
@@ -69,8 +67,6 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                 );
             case 'attendants':
                 return <AttendantsPage />
-            case 'admin':
-                return <AdminPage />
             case 'advanced':
                 return <AdvancedPage />
             default:
