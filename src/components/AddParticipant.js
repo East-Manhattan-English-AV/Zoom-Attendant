@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
@@ -21,6 +21,18 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
         newParticipant.phone.trim() !== '' ||
         newParticipant.notes.trim() !== '' ||
         newParticipant.overseer.trim() !== '';
+
+    // Handle Escape key to cancel
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && onCancel) {
+                onCancel();
+            }
+        };
+
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [onCancel]);
 
     // Handle form submission: add new participant to Firestore
     const handleSubmit = async () => {

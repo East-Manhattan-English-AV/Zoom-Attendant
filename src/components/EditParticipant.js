@@ -44,6 +44,18 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
         }
     }, [editingParticipant, originalParticipant]);
 
+    // Handle Escape key to cancel
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && onCancel) {
+                onCancel();
+            }
+        };
+
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [onCancel]);
+
     // Handle form submission: update the participant in Firestore
     const handleSubmit = async () => {
         if (!participant?.id) return;
