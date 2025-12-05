@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SearchPage from './SearchPage';
 import NavBar from './NavBar';
 import AdminPage from './AdminPage';
-import ZoomMtgEmbedded from '@zoom/meetingsdk/embedded';
+// import ZoomMtgEmbedded from '@zoom/meetingsdk/embedded';
 
 const MainContent = ({ user, userAccess, onLogout }) => {
     const allTabs = [
@@ -10,15 +10,15 @@ const MainContent = ({ user, userAccess, onLogout }) => {
         { key: 'admin', label: 'Admin' },
     ]
 
-    const authEndpoint = "https://zoom-meeting-sdk-auth-sample-tcz5.onrender.com";
-    const sdkKey = "IHOzSYcT0OCno8mVQvVRA";
-    const role = 0;
-    const userName = "Zoom Attendant";
+    // const authEndpoint = "https://zoom-meeting-sdk-auth-sample-tcz5.onrender.com";
+    // const sdkKey = "IHOzSYcT0OCno8mVQvVRA";
+    // const role = 0;
+    // const userName = "Zoom Attendant";
     const [showZoomForm, setShowZoomForm] = useState(false);
     const [meetingID, setMeetingID] = useState('');
     const [passcode, setPasscode] = useState('');
-    const [zoomConnected, setZoomConnected] = useState(false);
-    const client = ZoomMtgEmbedded.createClient();
+    // const [zoomConnected, setZoomConnected] = useState(false);
+    // const client = ZoomMtgEmbedded.createClient();
 
     // Filter tabs based on userRole
     const availableTabs = allTabs.filter((tab) => {
@@ -38,7 +38,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
 
     // Handler for the "Connect" button
     const handleConnect = async () => {
-        connectZoom(); // Call the connectZoom function to initialize the Zoom client
+        // connectZoom(); // Call the connectZoom function to initialize the Zoom client
         setShowZoomForm(false); // Hide the form
     };
 
@@ -71,83 +71,83 @@ const MainContent = ({ user, userAccess, onLogout }) => {
         }
     };
 
-    const connectZoom = async () => {
-        const getSignature = async () => {
-            try {
-                const req = await fetch(authEndpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        meetingNumber: meetingID,
-                        role: role,
-                    }),
-                });
-                const res = await req.json()
-                const signature = res.signature;
-                startMeeting(signature)
-            } catch (e) {
-                console.log(e);
-            }
-        };
-        getSignature();
-    };
+    // const connectZoom = async () => {
+    //     const getSignature = async () => {
+    //         try {
+    //             const req = await fetch(authEndpoint, {
+    //                 method: "POST",
+    //                 headers: { "Content-Type": "application/json" },
+    //                 body: JSON.stringify({
+    //                     meetingNumber: meetingID,
+    //                     role: role,
+    //                 }),
+    //             });
+    //             const res = await req.json()
+    //             const signature = res.signature;
+    //             startMeeting(signature)
+    //         } catch (e) {
+    //             console.log(e);
+    //         }
+    //     };
+    //     getSignature();
+    // };
 
-    const disconnectZoom = async () => {
-        try {
-            // Use the client.leave() method to disconnect
-            await client.leaveMeeting();
-            setZoomConnected(false);
-            console.log('Left meeting successfully!');
-        } catch (error) {
-            console.log('Error disconnecting from meeting:', error);
-        }
-    };
+    // const disconnectZoom = async () => {
+    //     try {
+    //         // Use the client.leave() method to disconnect
+    //         await client.leaveMeeting();
+    //         setZoomConnected(false);
+    //         console.log('Left meeting successfully!');
+    //     } catch (error) {
+    //         console.log('Error disconnecting from meeting:', error);
+    //     }
+    // };
 
-    const startMeeting = async (signature) => {
-        const meetingPassWord = passcode;
-        const meetingSDKElement = document.getElementById('meetingSDKElement');
-        const meetingSDKChatElement = document.getElementById('meetingSDKChatElement');
-        const meetingSDKParticipantsElement = document.getElementById('meetingSDKParticipantsElement')
-        try {
-            await client.init({
-                zoomAppRoot: meetingSDKElement,
-                language: 'en-US',
-                customize: {
-                    video: {
-                        popper: {
-                            disableDraggable: false
-                        }
-                    },
-                    participants: {
-                        popper: {
-                            disableDraggable: false,
-                            anchorElement: meetingSDKParticipantsElement,
-                            placement: 'bottom'
-                        }
-                    },
-                    chat: {
-                        popper: {
-                            disableDraggable: false,
-                            anchorElement: meetingSDKChatElement,
-                            placement: 'bottom'
-                        }
-                    }
-                }
-            });
-            await client.join({
-                sdkKey: sdkKey,
-                signature: signature,
-                meetingNumber: meetingID,
-                password: meetingPassWord,
-                userName: userName
-            });
-            setZoomConnected(true);
-            console.log('Joined meeting successfully!');
-        } catch (error) {
-            setZoomConnected(false);
-            console.log('Error joining meeting:', error);
-        }
-    };
+    // const startMeeting = async (signature) => {
+    //     const meetingPassWord = passcode;
+    //     const meetingSDKElement = document.getElementById('meetingSDKElement');
+    //     const meetingSDKChatElement = document.getElementById('meetingSDKChatElement');
+    //     const meetingSDKParticipantsElement = document.getElementById('meetingSDKParticipantsElement')
+    //     try {
+    //         await client.init({
+    //             zoomAppRoot: meetingSDKElement,
+    //             language: 'en-US',
+    //             customize: {
+    //                 video: {
+    //                     popper: {
+    //                         disableDraggable: false
+    //                     }
+    //                 },
+    //                 participants: {
+    //                     popper: {
+    //                         disableDraggable: false,
+    //                         anchorElement: meetingSDKParticipantsElement,
+    //                         placement: 'bottom'
+    //                     }
+    //                 },
+    //                 chat: {
+    //                     popper: {
+    //                         disableDraggable: false,
+    //                         anchorElement: meetingSDKChatElement,
+    //                         placement: 'bottom'
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //         await client.join({
+    //             sdkKey: sdkKey,
+    //             signature: signature,
+    //             meetingNumber: meetingID,
+    //             password: meetingPassWord,
+    //             userName: userName
+    //         });
+    //         setZoomConnected(true);
+    //         console.log('Joined meeting successfully!');
+    //     } catch (error) {
+    //         setZoomConnected(false);
+    //         console.log('Error joining meeting:', error);
+    //     }
+    // };
 
     return (
         <div className="main-content-container">
