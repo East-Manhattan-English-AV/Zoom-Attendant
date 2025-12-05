@@ -154,75 +154,91 @@ function SearchPage({ userAccess }) {
     return (
         <div className="search-container">
             <form onSubmit={(e) => e.preventDefault()}>
-                <div className="search-input-container" style={{ position: 'relative' }}>
-                    <input
-                        type="text"
-                        placeholder="Search Participants…"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        style={{ paddingRight: searchTerm ? '40px' : '12px' }}
-                    />
-                    {searchTerm && (
-                        <button
-                            type="button"
-                            onClick={clearSearch}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}>
+                    <div style={{ position: 'relative', flex: 1 }}>
+                        <input
+                            type="text"
+                            placeholder="Search Participants…"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             style={{
-                                position: 'absolute',
-                                right: '10px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                background: 'none',
+                                width: '100%',
+                                padding: searchTerm ? '12px 40px 12px 12px' : '12px',
+                                fontSize: '16px',
                                 border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '20px',
-                                color: '#6b7280',
-                                padding: '0 5px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
+                                borderRadius: '25px',
+                                outline: 'none',
+                                backgroundColor: '#f0edee',
+                                boxSizing: 'border-box'
                             }}
-                            aria-label="Clear search"
-                        >
-                            ✕
-                        </button>
-                    )}
+                        />
+                        {searchTerm && (
+                            <button
+                                type="button"
+                                onClick={clearSearch}
+                                style={{
+                                    position: 'absolute',
+                                    right: '12px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '18px',
+                                    color: '#6b7280',
+                                    padding: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                                aria-label="Clear search"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={handleAddParticipant}
+                        style={{
+                            padding: '12px 16px',
+                            backgroundColor: 'transparent',
+                            color: 'black',
+                            border: 'none',
+                            borderRadius: '25px',
+                            fontSize: '20px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minWidth: '48px'
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.backgroundColor = '#a9adb2';
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                        }}
+                    >
+                        +
+                    </button>
                 </div>
                 {searchTerm && (
                     <p style={{
                         fontSize: '13px',
                         color: '#6b7280',
                         marginTop: '4px',
-                        marginBottom: '0'
+                        marginBottom: '0',
+                        paddingLeft: '10px'
                     }}>
                         Keyboard shortcut: Press Shift + Delete/Backspace to quickly remove all text
                     </p>
                 )}
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            {searchTerm && (
-                <div style={{ padding: '10px 0' }}>
-                    <button
-                        onClick={handleAddParticipant}
-                        style={{
-                            width: '100%',
-                            padding: '12px 20px',
-                            backgroundColor: '#10b981',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '25px',
-                            fontSize: '16px',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.2s'
-                        }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
-                    >
-                        {userAccess === 'admin' ? '+ Add New Participant' : '+ Suggest New Participant'}
-                    </button>
-                </div>
-            )}
             <div className="results">
                 {filteredParticipants.length > 0 ? (
                     <ul className="participant-list">
