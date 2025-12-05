@@ -226,32 +226,75 @@ function SearchPage({ userAccess }) {
             <div className="results">
                 {filteredParticipants.length > 0 ? (
                     <ul className="participant-list">
-                        {filteredParticipants.map((p) => (
-                            <li
-                                key={p.id}
-                                className="participant-item"
-                                onClick={() => handleParticipantClick(p)}
-                                style={{ cursor: userAccess === 'admin' ? 'pointer' : 'default' }}
-                            >
-                                <div className="participant-header">
-                                    <span className="participant-name">
-                                        {highlightText(p.name || '', searchTerm)}
-                                    </span>
-                                    <span className="participant-info">
-                                        {highlightText(p.phone || '', searchTerm)} | {highlightText(p.device || '', searchTerm)}
-                                        {!p.allow && (
-                                            <span className="red-pill">NOT ALLOWED</span>
-                                        )}
-                                    </span>
-                                </div>
-                                <div className="participant-overseer">
-                                    Overseer: {highlightText(p.overseer || 'N/A', searchTerm)}
-                                </div>
-                                <div className="participant-notes">
-                                    Notes: {highlightText(p.notes || 'No notes available', searchTerm)}
-                                </div>
-                            </li>
-                        ))}
+                        {filteredParticipants.map((p) => {
+                            const overseer = p.overseer || '';
+                            const notes = p.notes || '';
+                            const phone = p.phone || '';
+                            const device = p.device || '';
+
+                            const shouldShowOverseer = overseer && overseer !== '-' && overseer.toLowerCase() !== 'n/a';
+                            const shouldShowNotes = notes && notes !== '-' && notes.toLowerCase() !== 'n/a' && notes.toLowerCase() !== 'no notes available';
+
+                            // Check if phone and device should be displayed
+                            const hasPhone = phone && phone !== '-';
+                            const hasDevice = device && device !== '-';
+
+                            // Build contact info string
+                            let contactInfo = '';
+                            if (hasPhone && hasDevice) {
+                                contactInfo = `${phone} | ${device}`;
+                            } else if (hasPhone) {
+                                contactInfo = phone;
+                            } else if (hasDevice) {
+                                contactInfo = device;
+                            }
+
+                            return (
+                                <li
+                                    key={p.id}
+                                    className="participant-item"
+                                    onClick={() => handleParticipantClick(p)}
+                                    style={{ cursor: userAccess === 'admin' ? 'pointer' : 'default' }}
+                                >
+                                    <div className="participant-header">
+                                        <span className="participant-name">
+                                            <span style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                width: '20px',
+                                                height: '20px',
+                                                borderRadius: '50%',
+                                                backgroundColor: p.allow ? '#10b981' : '#ef4444',
+                                                color: '#ffffff',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                marginRight: '8px',
+                                                flexShrink: 0
+                                            }}>
+                                                {p.allow ? '✓' : '✕'}
+                                            </span>
+                                            {highlightText(p.name || '', searchTerm)}
+                                            {contactInfo && (
+                                                <span style={{ color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
+                                                    {highlightText(contactInfo, searchTerm)}
+                                                </span>
+                                            )}
+                                        </span>
+                                    </div>
+                                    {shouldShowOverseer && (
+                                        <div className="participant-overseer">
+                                            Overseer: {highlightText(overseer, searchTerm)}
+                                        </div>
+                                    )}
+                                    {shouldShowNotes && (
+                                        <div style={{ color: '#6b7280', fontSize: '14px', marginTop: '4px' }}>
+                                            {highlightText(notes, searchTerm)}
+                                        </div>
+                                    )}
+                                </li>
+                            );
+                        })}
                     </ul>
                 ) : (
                     <div style={{
