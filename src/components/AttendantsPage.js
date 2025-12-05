@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where, doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import db from '../firebaseConfig';
 import EditAttendant from './EditAttendant';
 import AddAttendant from './AddAttendant';
@@ -8,10 +9,12 @@ function AttendantsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [allAttendants, setAllAttendants] = useState([]);
     const [filteredAttendants, setFilteredAttendants] = useState([]);
+    const [pendingRegistrants, setPendingRegistrants] = useState([]);
     const [error, setError] = useState('');
     const [selectedAttendant, setSelectedAttendant] = useState(null);
     const [isEditingAttendant, setIsEditingAttendant] = useState(false);
     const [isAddingAttendant, setIsAddingAttendant] = useState(false);
+    const auth = getAuth();
 
     useEffect(() => {
         const fetchAllAttendants = async () => {
@@ -29,7 +32,31 @@ function AttendantsPage() {
             }
         };
 
+        const fetchPendingRegistrants = async () => {
+            try {
+                const q = query(collection(db, 'pendingRegistrants'));
+                onSnapshot(q, (querySnapshot) => {
+                    const pending = querySnapshot.docs
+                        .map((doc) => ({
+                            id: doc.id,
+                            ...doc.data(),
+                        }))
+                        .filter(item => item.status === 'pending')
+                        .sort((a, b) => {
+                            if (!a.dateSubmitted || !b.dateSubmitted) return 0;
+                            return a.dateSubmitted.toDate() - b.dateSubmitted.toDate();
+                        });
+                    console.log('Pending registrants:', pending);
+                    setPendingRegistrants(pending);
+                });
+            } catch (err) {
+                console.error('Error fetching pending registrants:', err);
+                setError('Error fetching pending registrants: ' + err.message);
+            }
+        };
+
         fetchAllAttendants();
+        fetchPendingRegistrants();
     }, []);
 
     // Filter attendants based on the search term
@@ -87,6 +114,47 @@ function AttendantsPage() {
     const handleAttendantUpdate = () => {
         handleBackToAttendants();
         // Attendants list updates automatically via onSnapshot
+    };
+
+    // Handle approving a pending registrant
+    const handleApprove = async (registrant) => {
+        try {
+            const currentUser = auth.currentUser;
+
+            // Move to authorizedUsers collection
+            await setDoc(doc(db, 'authorizedUsers', registrant.id), {
+                name: registrant.name,
+                email: registrant.email,
+                access: 'basic', // Default access level
+                accessCode: registrant.accessCode,
+                congregationCode: registrant.congregationCode,
+                approvedOn: new Date(),
+                approvedBy: currentUser?.email || 'Unknown'
+            });
+
+            // Delete from pendingRegistrants
+            await deleteDoc(doc(db, 'pendingRegistrants', registrant.id));
+        } catch (error) {
+            console.error('Error approving registrant:', error);
+            setError('Error approving registrant: ' + error.message);
+        }
+    };
+
+    // Handle denying a pending registrant
+    const handleDeny = async (registrant) => {
+        try {
+            const currentUser = auth.currentUser;
+
+            // Update status to denied
+            await updateDoc(doc(db, 'pendingRegistrants', registrant.id), {
+                status: 'denied',
+                deniedOn: new Date(),
+                deniedBy: currentUser?.email || 'Unknown'
+            });
+        } catch (error) {
+            console.error('Error denying registrant:', error);
+            setError('Error denying registrant: ' + error.message);
+        }
     };
 
     // Clear search text
@@ -232,6 +300,73 @@ function AttendantsPage() {
                     </p>
                 )}
             </div>
+
+            {/* Pending Approval section */}
+            {pendingRegistrants.length > 0 && (
+                <div style={{ marginTop: '40px' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px', paddingLeft: '10px' }}>
+                        Pending Approval
+                    </h3>
+                    <ul className="participant-list">
+                        {pendingRegistrants.map((registrant) => (
+                            <li
+                                key={registrant.id}
+                                className="participant-item"
+                                style={{ cursor: 'default' }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                    <div className="participant-header" style={{ flex: 1 }}>
+                                        <span className="participant-name">
+                                            {registrant.name || 'Unknown'}
+                                            <span style={{ color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
+                                                {registrant.email || ''}
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px', marginLeft: '16px' }}>
+                                        <button
+                                            onClick={() => handleDeny(registrant)}
+                                            style={{
+                                                padding: '6px 16px',
+                                                backgroundColor: '#dc2626',
+                                                color: '#ffffff',
+                                                border: 'none',
+                                                borderRadius: '25px',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                                            onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+                                        >
+                                            Deny
+                                        </button>
+                                        <button
+                                            onClick={() => handleApprove(registrant)}
+                                            style={{
+                                                padding: '6px 16px',
+                                                backgroundColor: '#10b981',
+                                                color: '#ffffff',
+                                                border: 'none',
+                                                borderRadius: '25px',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
+                                            onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
+                                        >
+                                            Approve
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
