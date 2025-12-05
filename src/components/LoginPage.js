@@ -40,7 +40,7 @@ function LoginPage() {
                     required
                 />
                 <input
-                    type="text"
+                    type="password"
                     placeholder="Password"
                     value={loginData.password}
                     onChange={(e) =>
