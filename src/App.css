@@ -287,6 +287,8 @@ button:hover {
   align-items: center;
   padding: 10px 20px;
   background-color: #fff;
+  gap: 20px;
+  position: relative;
   /* border-bottom: 1px solid #ddd; */
 }
 
@@ -295,6 +297,20 @@ button:hover {
   font-size: 18px;
   font-weight: bold;
   color: #333;
+  flex: 0 1 auto;
+  max-width: 30%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  z-index: 1;
+  position: relative;
+}
+
+/* Center the tab bar */
+.tab-bar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
 }
 
 /* Style for the logout button */
@@ -317,6 +333,9 @@ button:hover {
    border-radius: 25px;
    cursor: pointer;
    transition: background-color 0.3s;
+   margin-left: auto;
+   z-index: 1;
+   position: relative;
  }
 
 .logout-button:hover {
