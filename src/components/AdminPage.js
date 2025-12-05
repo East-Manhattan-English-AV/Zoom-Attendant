@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import db from '../firebaseConfig';
-import SpreadsheetImporter from './SpreadsheetImporter';
 import EditAttendant from './EditAttendant';
 import Sheet from './Sheet';
 import SheetContent from './SheetContent';
@@ -130,11 +129,6 @@ function AdminPage() {
                         )}
                     </section>
 
-                    <section>
-                        <h2>Import Participants</h2>
-                        <p>Upload a spreadsheet to import participants. Note: Ensure the spreadsheet is formatted correctly. Supported formats: .xlsx, .csv.</p>
-                        <SpreadsheetImporter />
-                    </section>
                     <section>
                         <h2>Duplicate Entries</h2>
                         {loading && <p>Loading...</p>}

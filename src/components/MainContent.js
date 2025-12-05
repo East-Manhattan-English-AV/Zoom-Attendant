@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import SearchPage from './SearchPage';
 import NavBar from './NavBar';
 import AdminPage from './AdminPage';
+import AdvancedPage from './AdvancedPage';
 // import ZoomMtgEmbedded from '@zoom/meetingsdk/embedded';
 
 const MainContent = ({ user, userAccess, onLogout }) => {
     const allTabs = [
         { key: 'search', label: 'Search' },
         { key: 'admin', label: 'Admin' },
+        { key: 'advanced', label: 'Advanced' },
     ]
 
     // const authEndpoint = "https://zoom-meeting-sdk-auth-sample-tcz5.onrender.com";
@@ -65,6 +67,8 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                 );
             case 'admin':
                 return <AdminPage />
+            case 'advanced':
+                return <AdvancedPage />
             default:
                 // If the current view doesn't match any tab, return null or a default component
                 return null;
