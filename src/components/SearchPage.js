@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import db from '../firebaseConfig';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import EditParticipant from './EditParticipant';
+import AddParticipant from './AddParticipant';
 
 function SearchPage({ userAccess }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -10,6 +11,7 @@ function SearchPage({ userAccess }) {
     const [error, setError] = useState('');
     const [selectedParticipant, setSelectedParticipant] = useState(null);
     const [isEditingParticipant, setIsEditingParticipant] = useState(false);
+    const [isAddingParticipant, setIsAddingParticipant] = useState(false);
 
     useEffect(() => {
         const fetchAllParticipants = async () => {
@@ -99,6 +101,12 @@ function SearchPage({ userAccess }) {
     const handleBackToSearch = () => {
         setSelectedParticipant(null);
         setIsEditingParticipant(false);
+        setIsAddingParticipant(false);
+    };
+
+    // Navigate to add participant view
+    const handleAddParticipant = () => {
+        setIsAddingParticipant(true);
     };
 
     // Callback after updating participant
@@ -119,6 +127,18 @@ function SearchPage({ userAccess }) {
             clearSearch();
         }
     };
+
+    // Render add participant view if adding
+    if (isAddingParticipant) {
+        return (
+            <AddParticipant
+                initialName={searchTerm}
+                userAccess={userAccess}
+                onCancel={handleBackToSearch}
+                onUpdate={handleParticipantUpdate}
+            />
+        );
+    }
 
     // Render edit view if editing, otherwise render search view
     if (isEditingParticipant && selectedParticipant) {
@@ -180,6 +200,29 @@ function SearchPage({ userAccess }) {
                 )}
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            {searchTerm && (
+                <div style={{ padding: '10px 0' }}>
+                    <button
+                        onClick={handleAddParticipant}
+                        style={{
+                            width: '100%',
+                            padding: '12px 20px',
+                            backgroundColor: '#10b981',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
+                    >
+                        {userAccess === 'admin' ? '+ Add New Participant' : '+ Suggest New Participant'}
+                    </button>
+                </div>
+            )}
             <div className="results">
                 {filteredParticipants.length > 0 ? (
                     <ul className="participant-list">
