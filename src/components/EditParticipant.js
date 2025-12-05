@@ -155,7 +155,7 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                             }
                             placeholder="Enter notes"
                             rows="4"
-                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
                         />
                     </div>
                     <div className="form-group" style={{ display: 'flex', justifyContent: 'flex-start' }}>
