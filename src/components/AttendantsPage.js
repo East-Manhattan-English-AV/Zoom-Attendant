@@ -10,6 +10,7 @@ function AttendantsPage() {
     const [allAttendants, setAllAttendants] = useState([]);
     const [filteredAttendants, setFilteredAttendants] = useState([]);
     const [pendingRegistrants, setPendingRegistrants] = useState([]);
+    const [validatedPendingAttendants, setValidatedPendingAttendants] = useState([]);
     const [error, setError] = useState('');
     const [selectedAttendant, setSelectedAttendant] = useState(null);
     const [isEditingAttendant, setIsEditingAttendant] = useState(false);
@@ -55,8 +56,30 @@ function AttendantsPage() {
             }
         };
 
+        const fetchValidatedPendingAttendants = async () => {
+            try {
+                const q = query(collection(db, 'validatedPendingAttendants'));
+                onSnapshot(q, (querySnapshot) => {
+                    const validated = querySnapshot.docs
+                        .map((doc) => ({
+                            id: doc.id,
+                            ...doc.data(),
+                        }))
+                        .sort((a, b) => {
+                            if (!a.createdOn || !b.createdOn) return 0;
+                            return b.createdOn.toDate() - a.createdOn.toDate();
+                        });
+                    setValidatedPendingAttendants(validated);
+                });
+            } catch (err) {
+                console.error('Error fetching validated pending attendants:', err);
+                setError('Error fetching validated pending attendants: ' + err.message);
+            }
+        };
+
         fetchAllAttendants();
         fetchPendingRegistrants();
+        fetchValidatedPendingAttendants();
     }, []);
 
     // Filter attendants based on the search term
@@ -167,6 +190,38 @@ function AttendantsPage() {
         if (e.shiftKey && (e.key === 'Delete' || e.key === 'Backspace')) {
             e.preventDefault();
             clearSearch();
+        }
+    };
+
+    // Handle copying registration details to clipboard
+    const handleCopyDetails = async (attendant) => {
+        const details = `Name: ${attendant.name}
+Email: ${attendant.email}
+Congregation Code: ${attendant.congregationCode}
+Access Code: ${attendant.accessCode}`;
+
+        try {
+            await navigator.clipboard.writeText(details);
+            // Optional: Show a success message to the user
+            console.log('Details copied to clipboard');
+        } catch (err) {
+            console.error('Failed to copy details:', err);
+            setError('Failed to copy details to clipboard');
+        }
+    };
+
+    // Handle deleting a validated pending attendant
+    const handleDeleteValidatedAttendant = async (attendant) => {
+        const confirmed = window.confirm(`Are you sure you want to delete ${attendant.name}? This action cannot be undone.`);
+
+        if (!confirmed) return;
+
+        try {
+            await deleteDoc(doc(db, 'validatedPendingAttendants', attendant.id));
+            console.log('Validated pending attendant deleted');
+        } catch (err) {
+            console.error('Failed to delete validated pending attendant:', err);
+            setError('Failed to delete attendant: ' + err.message);
         }
     };
 
@@ -300,6 +355,73 @@ function AttendantsPage() {
                     </p>
                 )}
             </div>
+
+            {/* Pending Registration section */}
+            {validatedPendingAttendants.length > 0 && (
+                <div style={{ marginTop: '40px' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px', paddingLeft: '10px' }}>
+                        Pending Registration
+                    </h3>
+                    <ul className="participant-list">
+                        {validatedPendingAttendants.map((attendant) => (
+                            <li
+                                key={attendant.id}
+                                className="participant-item"
+                                style={{ cursor: 'default' }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                    <div className="participant-header" style={{ flex: 1 }}>
+                                        <span className="participant-name">
+                                            {attendant.name || 'Unknown'}
+                                            <span style={{ color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
+                                                {attendant.email || ''}
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px', marginLeft: '16px' }}>
+                                        <button
+                                            onClick={() => handleDeleteValidatedAttendant(attendant)}
+                                            style={{
+                                                padding: '6px 16px',
+                                                backgroundColor: '#dc2626',
+                                                color: '#ffffff',
+                                                border: 'none',
+                                                borderRadius: '25px',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                                            onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+                                        >
+                                            Delete
+                                        </button>
+                                        <button
+                                            onClick={() => handleCopyDetails(attendant)}
+                                            style={{
+                                                padding: '6px 16px',
+                                                backgroundColor: '#2563eb',
+                                                color: '#ffffff',
+                                                border: 'none',
+                                                borderRadius: '25px',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                                            onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
+                                        >
+                                            Copy Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             {/* Pending Approval section */}
             {pendingRegistrants.length > 0 && (
