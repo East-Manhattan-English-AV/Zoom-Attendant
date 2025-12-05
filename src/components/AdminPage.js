@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import SpreadsheetImporter from './SpreadsheetImporter';
 import EditAttendant from './EditAttendant';
@@ -11,8 +11,8 @@ function AdminPage() {
     const [duplicates, setDuplicates] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [editingParticipant, setEditingParticipant] = useState(null);
-    const [otherDuplicates, setOtherDuplicates] = useState([]);
+    // const [editingParticipant, setEditingParticipant] = useState(null);
+    // const [otherDuplicates, setOtherDuplicates] = useState([]);
 
     // NEW: State for fetching all attendants and editing one
     const [attendants, setAttendants] = useState([]);
@@ -67,23 +67,23 @@ function AdminPage() {
     };
 
     // Close the participant modal (existing)
-    const closeEditModal = () => {
-        setEditingParticipant(null);
-        setOtherDuplicates([]);
-    };
+    // const closeEditModal = () => {
+    //     setEditingParticipant(null);
+    //     // setOtherDuplicates([]);
+    // };
 
     // Save updated participant (existing)
-    const saveParticipant = async () => {
-        if (!editingParticipant) return;
-        try {
-            const participantRef = doc(db, 'participants', editingParticipant.id);
-            await updateDoc(participantRef, editingParticipant);
-            checkForDuplicates();
-            closeEditModal();
-        } catch (err) {
-            setError('Error saving participant: ' + err.message);
-        }
-    };
+    // const saveParticipant = async () => {
+    //     if (!editingParticipant) return;
+    //     try {
+    //         const participantRef = doc(db, 'participants', editingParticipant.id);
+    //         await updateDoc(participantRef, editingParticipant);
+    //         checkForDuplicates();
+    //         closeEditModal();
+    //     } catch (err) {
+    //         setError('Error saving participant: ' + err.message);
+    //     }
+    // };
 
     // Callback to close the EditAttendant modal
     const closeEditAttendantModal = () => {
