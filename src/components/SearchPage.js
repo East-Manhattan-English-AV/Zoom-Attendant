@@ -210,7 +210,7 @@ function SearchPage({ userAccess }) {
                             backgroundColor: '#10b981',
                             color: '#ffffff',
                             border: 'none',
-                            borderRadius: '6px',
+                            borderRadius: '25px',
                             fontSize: '16px',
                             fontWeight: '500',
                             cursor: 'pointer',

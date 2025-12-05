@@ -48,6 +48,7 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
                             setEditingAttendant({ ...editingAttendant, name: e.target.value })
                         }
                         placeholder="Enter name"
+                        style={{ backgroundColor: '#F7F7F7', color: '#000000' }}
                     />
                 </div>
             <div className="form-group">
@@ -60,6 +61,7 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
                         setEditingAttendant({ ...editingAttendant, email: e.target.value })
                     }
                     placeholder="Enter email"
+                    style={{ backgroundColor: '#F7F7F7', color: '#000000' }}
                 />
             </div>
             <div className="form-group">
@@ -70,6 +72,7 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
                     onChange={(e) =>
                         setEditingAttendant({ ...editingAttendant, access: e.target.value })
                     }
+                    style={{ backgroundColor: '#F7F7F7', color: '#000000' }}
                 >
                     <option value="none">None</option>
                     <option value="basic">Basic</option>
@@ -79,10 +82,10 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
             </div>
 
             <div className="action-buttons">
-                <button type="button" className="update-password-button">
+                <button type="button" className="update-password-button" style={{ borderRadius: '25px' }}>
                     Update password
                 </button>
-                <button type="button" className="delete-button">
+                <button type="button" className="delete-button" style={{ borderRadius: '25px' }}>
                     Delete
                 </button>
             </div>
@@ -90,10 +93,10 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
             <hr />
 
             <div className="form-footer">
-                <button type="button" onClick={onCancel} className="cancel-button">
+                <button type="button" onClick={onCancel} className="cancel-button" style={{ borderRadius: '25px' }}>
                     Cancel
                 </button>
-                <button type="button" onClick={handleSubmit} className="submit-button">
+                <button type="button" onClick={handleSubmit} className="submit-button" style={{ borderRadius: '25px' }}>
                     Submit
                 </button>
             </div>

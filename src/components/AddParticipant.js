@@ -61,6 +61,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                                 setNewParticipant({ ...newParticipant, name: e.target.value })
                             }
                             placeholder="Enter name"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
                         />
                     </div>
                     <div className="form-group">
@@ -73,6 +74,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                                 setNewParticipant({ ...newParticipant, device: e.target.value })
                             }
                             placeholder="Enter device"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
                         />
                     </div>
                     <div className="form-group">
@@ -85,6 +87,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                                 setNewParticipant({ ...newParticipant, phone: e.target.value })
                             }
                             placeholder="Enter phone"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
                         />
                     </div>
                     <div className="form-group">
@@ -97,6 +100,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                                 setNewParticipant({ ...newParticipant, overseer: e.target.value })
                             }
                             placeholder="Enter overseer"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
                         />
                     </div>
                     <div className="form-group">
@@ -109,6 +113,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                             }
                             placeholder="Enter notes"
                             rows="4"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
                         />
                     </div>
                     <div className="form-group" style={{ display: 'flex', justifyContent: 'flex-start' }}>
@@ -151,7 +156,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                         backgroundColor: '#f3f4f6',
                         color: '#374151',
                         border: 'none',
-                        borderRadius: '6px',
+                        borderRadius: '25px',
                         fontSize: '16px',
                         fontWeight: '500',
                         cursor: 'pointer'
@@ -168,7 +173,7 @@ function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
                         backgroundColor: hasContent ? '#2563eb' : '#d1d5db',
                         color: hasContent ? '#ffffff' : '#9ca3af',
                         border: 'none',
-                        borderRadius: '6px',
+                        borderRadius: '25px',
                         fontSize: '16px',
                         fontWeight: '500',
                         cursor: hasContent ? 'pointer' : 'not-allowed',
