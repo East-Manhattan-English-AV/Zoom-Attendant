@@ -1,8 +1,8 @@
 /* Container for the top navigation */
 .top-nav {
   background-color: #f0edee;
-  padding: 10px 20px;
-  border-radius: 50px;  
+  padding: 0;
+  border-radius: 50px;
 }
 
 /* Navigation bar layout */
@@ -10,35 +10,52 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 100%;
 }
 
 /* Tab bar styling */
 .tabs {
   display: flex;
-  gap: 10px;
+  gap: 0;
   /* Use flexbox for layout */
-  align-items: center;
+  align-items: stretch;
   /* Align items vertically */
   justify-content: center;
   width: 100%;
   /* Ensure the container spans the full width */
-  height: 35px;
+  height: 45px;
   /* Set a fixed height for the container */
 }
 
 .tab {
   background-color: transparent;
   border: none;
-  border-radius: 25px; /* Pill shape */
-  /* padding: 8px 16px; */
+  border-radius: 0;
+  padding: 8px 20px;
   cursor: pointer;
   font-size: 16px;
-  /* transition: background-color 0.3s; */
+  transition: background-color 0.3s;
   color: black;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  outline: none;
+  box-shadow: none;
+  margin: 0;
+}
+
+.tab:first-child {
+  border-radius: 25px 0 0 25px;
+}
+
+.tab:last-child {
+  border-radius: 0 25px 25px 0;
 }
 
 .tab:hover {
-  background-color: #a9adb2;
+  background-color: #d4d7da;
 }
 
 .tab.active {
@@ -47,16 +64,18 @@
   font-weight: bold;
 }
 
+.tab.active:hover {
+  background-color: #d4d7da;
+}
+
 .tab-divider {
   display: inline-block;
   width: 1px;
   /* Thin vertical line */
-  height: auto;
-  /* Allow the divider to stretch */
+  height: 100%;
+  /* Stretch to full height */
   background-color: #ccc;
   /* Divider color */
-  align-self: stretch;
-  /* Stretch to match the height of the parent container */
   margin: 0;
   /* Remove extra spacing */
 }
