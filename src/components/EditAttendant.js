@@ -55,7 +55,11 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
         if (!attendant?.id) return;
         const attendantRef = doc(db, 'authorizedUsers', attendant.id);
         try {
-            await updateDoc(attendantRef, editingAttendant);
+            await updateDoc(attendantRef, {
+                ...editingAttendant,
+                updatedAt: new Date(),
+                updatedBy: auth.currentUser?.email || 'Unknown'
+            });
             if (onUpdate) onUpdate(); // Callback for successful update
         } catch (error) {
             console.error('Error updating attendant:', error);

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import db from '../firebaseConfig';
 
 function EditParticipant({ participant, onCancel, onUpdate }) {
+    const auth = getAuth();
     const [editingParticipant, setEditingParticipant] = useState({
         name: '',
         device: '',
@@ -61,7 +63,11 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
         if (!participant?.id) return;
         const participantRef = doc(db, 'participants', participant.id);
         try {
-            await updateDoc(participantRef, editingParticipant);
+            await updateDoc(participantRef, {
+                ...editingParticipant,
+                updatedAt: new Date(),
+                updatedBy: auth.currentUser?.email || 'Unknown'
+            });
             if (onUpdate) onUpdate(); // Callback for successful update
         } catch (error) {
             console.error('Error updating participant:', error);
