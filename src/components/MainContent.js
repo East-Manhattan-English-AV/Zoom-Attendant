@@ -161,7 +161,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                         tabs={availableTabs}
                     />
                 </div>
-                <button onClick={() => {
+                {/* <button onClick={() => {
                     if (zoomConnected) {
                         disconnectZoom(); // Disconnect if already connected
                     } else {
@@ -169,7 +169,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                     }
                 }}>
                     {zoomConnected ? "Disconnect Zoom" : "Connect Zoom"}
-                </button>
+                </button> */}
                 <button className="logout-button" onClick={onLogout}>
                     Logout
                 </button>
