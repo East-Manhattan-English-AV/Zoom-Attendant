@@ -1,25 +1,18 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import db from '../firebaseConfig';
 import EditAttendant from './EditAttendant';
-import Sheet from './Sheet';
-import SheetContent from './SheetContent';
 
 function AdminPage() {
     // State for managing duplicates (existing)
     const [duplicates, setDuplicates] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    // const [editingParticipant, setEditingParticipant] = useState(null);
-    // const [otherDuplicates, setOtherDuplicates] = useState([]);
 
-    // NEW: State for fetching all attendants and editing one
+    // State for fetching all attendants and editing one
     const [attendants, setAttendants] = useState([]);
-    const [editingAttendantRecord, setEditingAttendantRecord] = useState(null);
-    const [editAttendant, setEditAttendant] = useState(false);
-
-    // Use useMemo to stabilize the editingAttendantRecord object
-    const stableAttendant = useMemo(() => editingAttendantRecord, [editingAttendantRecord]);
+    const [selectedAttendant, setSelectedAttendant] = useState(null);
+    const [isEditingAttendant, setIsEditingAttendant] = useState(false);
 
     // Function to fetch attendants from Firestore
     const fetchAttendants = async () => {
@@ -84,21 +77,21 @@ function AdminPage() {
     //     }
     // };
 
-    // Callback to close the EditAttendant modal
-    const closeEditAttendantModal = () => {
-        setEditingAttendantRecord(null);
-        setEditAttendant(false);
-    };
-
+    // Handle attendant row click to navigate to edit view
     const handleEditAttendant = (attendant) => {
-        setEditingAttendantRecord(attendant);
-        setEditAttendant(true);
+        setSelectedAttendant(attendant);
+        setIsEditingAttendant(true);
     };
 
-    // Callback to update attendant in Firestore is handled inside EditAttendant.
-    // Here we simply re-fetch attendants after the update.
+    // Navigate back to admin list
+    const handleBackToAdmin = () => {
+        setSelectedAttendant(null);
+        setIsEditingAttendant(false);
+    };
+
+    // Callback after updating attendant
     const handleAttendantUpdate = () => {
-        closeEditAttendantModal();
+        handleBackToAdmin();
         fetchAttendants();
     };
 
@@ -106,6 +99,17 @@ function AdminPage() {
         checkForDuplicates();
         fetchAttendants();
     }, []);
+
+    // Render edit view if editing, otherwise render admin list view
+    if (isEditingAttendant && selectedAttendant) {
+        return (
+            <EditAttendant
+                attendant={selectedAttendant}
+                onCancel={handleBackToAdmin}
+                onUpdate={handleAttendantUpdate}
+            />
+        );
+    }
 
     return (
         <div className="min-h-screen p-8 bg-gray-100">
@@ -115,12 +119,25 @@ function AdminPage() {
                         <h2>Attendants</h2>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         {attendants.length > 0 ? (
-                            <ul>
+                            <ul className="participant-list">
                                 {attendants.map((attendant) => (
-                                    <li key={attendant.id}>
-                                        <button key={attendant.id} onClick={() => handleEditAttendant(attendant)}>
-                                            {attendant.name} - {attendant.email} - {attendant.access}
-                                        </button>
+                                    <li
+                                        key={attendant.id}
+                                        className="participant-item"
+                                        onClick={() => handleEditAttendant(attendant)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <div className="participant-header">
+                                            <span className="participant-name">
+                                                {attendant.name}
+                                                <span style={{ color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
+                                                    {attendant.access}
+                                                </span>
+                                                <span style={{ color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
+                                                    {attendant.email}
+                                                </span>
+                                            </span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -152,17 +169,8 @@ function AdminPage() {
                             !loading && <p>No duplicate entries found.</p>
                         )}
                     </section>
-                    <Sheet isOpen={editAttendant} onClose={closeEditAttendantModal}>
-                        <SheetContent>
-                            <EditAttendant
-                                attendant={stableAttendant}
-                                onCancel={closeEditAttendantModal}
-                                onUpdate={handleAttendantUpdate}
-                            />
-                        </SheetContent>
-                    </Sheet>
                 </div>
-            </div>    
+            </div>
         </div>
     );
 };

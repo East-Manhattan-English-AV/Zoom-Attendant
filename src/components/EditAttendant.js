@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
 function EditAttendant({ attendant, onCancel, onUpdate }) {
@@ -8,17 +8,44 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
         email: '',
         access: 'none'
     });
+    const [originalAttendant, setOriginalAttendant] = useState(null);
+    const [hasChanges, setHasChanges] = useState(false);
 
     // Update editing state when the attendant prop changes
     useEffect(() => {
         if (attendant) {
-            setEditingAttendant({
+            const initial = {
                 name: attendant.name || '',
                 email: attendant.email || '',
                 access: attendant.access || 'none'
-            });
+            };
+            setEditingAttendant(initial);
+            setOriginalAttendant(initial);
         }
     }, [attendant]);
+
+    // Detect changes
+    useEffect(() => {
+        if (originalAttendant) {
+            const changed =
+                editingAttendant.name !== originalAttendant.name ||
+                editingAttendant.email !== originalAttendant.email ||
+                editingAttendant.access !== originalAttendant.access;
+            setHasChanges(changed);
+        }
+    }, [editingAttendant, originalAttendant]);
+
+    // Handle Escape key to cancel
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && onCancel) {
+                onCancel();
+            }
+        };
+
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [onCancel]);
 
     // Handle form submission: update the attendant in Firestore
     const handleSubmit = async () => {
@@ -32,75 +59,154 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
         }
     };
 
+    // Handle delete: remove attendant from authorizedUsers collection
+    const handleDelete = async () => {
+        if (!attendant?.id) return;
+
+        // Show confirmation dialog
+        const confirmDelete = window.confirm(
+            `Are you sure you want to delete ${attendant.name || 'this attendant'}? This action cannot be undone.`
+        );
+
+        if (!confirmDelete) return;
+
+        try {
+            // Delete from authorizedUsers collection
+            const attendantRef = doc(db, 'authorizedUsers', attendant.id);
+            await deleteDoc(attendantRef);
+
+            if (onUpdate) onUpdate(); // Navigate back after deletion
+        } catch (error) {
+            console.error('Error deleting attendant:', error);
+        }
+    };
+
     return (
-        <div>
-            <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Edit Attendant</h2>
-            </div>
-            <form className="edit-attendant-form p-6" onSubmit={(e) => e.preventDefault()}>
-                <div className="form-group">
-                    <label htmlFor="attendant-name">Name</label>
-                    <input
-                        type="text"
-                        id="attendant-name"
-                        value={editingAttendant.name}
-                        onChange={(e) =>
-                            setEditingAttendant({ ...editingAttendant, name: e.target.value })
-                        }
-                        placeholder="Enter name"
-                        style={{ backgroundColor: '#F7F7F7', color: '#000000' }}
-                    />
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            {/* Scrollable content area */}
+            <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '80px' }}>
+                <h2 style={{ padding: '20px', fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
+                    Edit Attendant
+                </h2>
+                <form className="edit-attendant-form" style={{ padding: '0 20px' }} onSubmit={(e) => e.preventDefault()}>
+                    <div className="form-group">
+                        <label htmlFor="attendant-name">Name</label>
+                        <input
+                            type="text"
+                            id="attendant-name"
+                            value={editingAttendant.name}
+                            onChange={(e) =>
+                                setEditingAttendant({ ...editingAttendant, name: e.target.value })
+                            }
+                            placeholder="Enter name"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="attendant-email">Email</label>
+                        <input
+                            type="email"
+                            id="attendant-email"
+                            value={editingAttendant.email}
+                            onChange={(e) =>
+                                setEditingAttendant({ ...editingAttendant, email: e.target.value })
+                            }
+                            placeholder="Enter email"
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="attendant-access">Access</label>
+                        <select
+                            id="attendant-access"
+                            value={editingAttendant.access}
+                            onChange={(e) =>
+                                setEditingAttendant({ ...editingAttendant, access: e.target.value })
+                            }
+                            style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
+                        >
+                            <option value="none">None</option>
+                            <option value="basic">Basic</option>
+                            <option value="editor">Editor</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </form>
+
+                {/* Delete button - centered above bottom bar */}
+                <div style={{ padding: '20px', textAlign: 'center', marginTop: '20px' }}>
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        style={{
+                            padding: '10px 24px',
+                            backgroundColor: '#dc2626',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '25px',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+                    >
+                        Delete Attendant
+                    </button>
                 </div>
-            <div className="form-group">
-                <label htmlFor="attendant-email">Email</label>
-                <input
-                    type="email"
-                    id="attendant-email"
-                    value={editingAttendant.email}
-                    onChange={(e) =>
-                        setEditingAttendant({ ...editingAttendant, email: e.target.value })
-                    }
-                    placeholder="Enter email"
-                    style={{ backgroundColor: '#F7F7F7', color: '#000000' }}
-                />
             </div>
-            <div className="form-group">
-                <label htmlFor="attendant-access">Access</label>
-                <select
-                    id="attendant-access"
-                    value={editingAttendant.access}
-                    onChange={(e) =>
-                        setEditingAttendant({ ...editingAttendant, access: e.target.value })
-                    }
-                    style={{ backgroundColor: '#F7F7F7', color: '#000000' }}
+
+            {/* Fixed bottom button bar */}
+            <div
+                style={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '16px 20px',
+                    backgroundColor: '#fff',
+                    borderTop: '1px solid #e5e7eb',
+                    zIndex: 10
+                }}
+            >
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    style={{
+                        padding: '10px 24px',
+                        backgroundColor: '#f3f4f6',
+                        color: '#374151',
+                        border: 'none',
+                        borderRadius: '25px',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                    }}
                 >
-                    <option value="none">None</option>
-                    <option value="basic">Basic</option>
-                    <option value="editor">Editor</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-
-            <div className="action-buttons">
-                <button type="button" className="update-password-button" style={{ borderRadius: '25px' }}>
-                    Update password
-                </button>
-                <button type="button" className="delete-button" style={{ borderRadius: '25px' }}>
-                    Delete
-                </button>
-            </div>
-
-            <hr />
-
-            <div className="form-footer">
-                <button type="button" onClick={onCancel} className="cancel-button" style={{ borderRadius: '25px' }}>
                     Cancel
                 </button>
-                <button type="button" onClick={handleSubmit} className="submit-button" style={{ borderRadius: '25px' }}>
+                <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={!hasChanges}
+                    style={{
+                        padding: '10px 24px',
+                        backgroundColor: hasChanges ? '#2563eb' : '#d1d5db',
+                        color: hasChanges ? '#ffffff' : '#9ca3af',
+                        border: 'none',
+                        borderRadius: '25px',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: hasChanges ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.2s'
+                    }}
+                >
                     Submit
                 </button>
             </div>
-            </form>
         </div>
     );
 }
