@@ -152,7 +152,7 @@ function SearchPage({ userAccess }) {
     }
 
     return (
-        <div className="search-container">
+        <div className="search-container" style={{ padding: '0 60px' }}>
             <form onSubmit={(e) => e.preventDefault()}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}>
                     <div style={{ position: 'relative', flex: 1 }}>

@@ -124,82 +124,85 @@ function AttendantsPage() {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {/* Search bar */}
-            <div className="search-input-container" style={{ padding: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
-                    <input
-                        type="text"
-                        placeholder="Search attendants..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        style={{
-                            width: '100%',
-                            padding: '12px 40px 12px 12px',
-                            fontSize: '16px',
-                            border: 'none',
-                            borderRadius: '25px',
-                            outline: 'none',
-                            backgroundColor: '#f0edee',
-                            boxSizing: 'border-box'
-                        }}
-                    />
-                    {searchTerm && (
-                        <button
-                            onClick={clearSearch}
+        <div className="search-container" style={{ padding: '0 60px' }}>
+            <form onSubmit={(e) => e.preventDefault()}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}>
+                    <div style={{ position: 'relative', flex: 1 }}>
+                        <input
+                            type="text"
+                            placeholder="Search attendants..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             style={{
-                                position: 'absolute',
-                                right: '12px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                background: 'transparent',
+                                width: '100%',
+                                padding: searchTerm ? '12px 40px 12px 12px' : '12px',
+                                fontSize: '16px',
                                 border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '18px',
-                                color: '#6b7280',
-                                padding: '4px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
+                                borderRadius: '25px',
+                                outline: 'none',
+                                backgroundColor: '#f0edee',
+                                boxSizing: 'border-box'
                             }}
-                        >
-                            ✕
-                        </button>
-                    )}
+                        />
+                        {searchTerm && (
+                            <button
+                                type="button"
+                                onClick={clearSearch}
+                                style={{
+                                    position: 'absolute',
+                                    right: '12px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '18px',
+                                    color: '#6b7280',
+                                    padding: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={handleAddAttendant}
+                        style={{
+                            padding: '10px',
+                            backgroundColor: 'transparent',
+                            color: 'black',
+                            border: 'none',
+                            borderRadius: '50%',
+                            fontSize: '28px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '48px',
+                            height: '48px'
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.backgroundColor = '#a9adb2';
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                        }}
+                    >
+                        +
+                    </button>
                 </div>
-                <button
-                    onClick={handleAddAttendant}
-                    style={{
-                        padding: '10px',
-                        backgroundColor: 'transparent',
-                        color: 'black',
-                        border: 'none',
-                        borderRadius: '50%',
-                        fontSize: '28px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '48px',
-                        height: '48px'
-                    }}
-                    onMouseOver={(e) => {
-                        e.target.style.backgroundColor = '#a9adb2';
-                    }}
-                    onMouseOut={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                    }}
-                >
-                    +
-                </button>
-            </div>
+            </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {/* Attendants list */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 10px' }}>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div className="results">
                 {filteredAttendants.length > 0 ? (
                     <ul className="participant-list">
                         {filteredAttendants.map((attendant) => (

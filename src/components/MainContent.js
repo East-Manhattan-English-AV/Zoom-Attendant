@@ -53,18 +53,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
     const renderView = () => {
         switch (currentView) {
             case 'search':
-                return (
-                    <div className="content-container">
-                        <div>
-                            <div id="meetingSDKElement"></div>
-                            <div id="meetingSDKParticipantsElement"></div>
-                            <div id="meetingSDKChatElement"></div>
-                        </div>
-                        <div className="search-view">
-                            <SearchPage user={user} userAccess={userAccess} />
-                        </div>
-                    </div>
-                );
+                return <SearchPage user={user} userAccess={userAccess} />
             case 'attendants':
                 return <AttendantsPage />
             case 'advanced':
