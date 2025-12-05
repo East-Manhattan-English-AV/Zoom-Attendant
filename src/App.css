@@ -301,8 +301,10 @@ button:hover {
   max-width: 30%;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  white-space: normal;
   z-index: 1;
   position: relative;
+  margin-right: 20px;
 }
 
 /* Center the tab bar */

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SearchPage from './SearchPage';
 import NavBar from './NavBar';
 import AdvancedPage from './AdvancedPage';
@@ -32,11 +32,30 @@ const MainContent = ({ user, userAccess, onLogout }) => {
 
     // Manage the current view state. Default to first available tab.
     const [currentView, setCurrentView] = useState('search');
+    const [showAccountMenu, setShowAccountMenu] = useState(false);
+    const accountMenuRef = useRef(null);
 
     // Handler to change the view when a tab is clicked
     const handleViewChange = (view) => {
         setCurrentView(view);
     };
+
+    // Close account menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (accountMenuRef.current && !accountMenuRef.current.contains(event.target)) {
+                setShowAccountMenu(false);
+            }
+        };
+
+        if (showAccountMenu) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showAccountMenu]);
 
     // Handler for the "Connect" button
     const handleConnect = async () => {
@@ -145,7 +164,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
     return (
         <div className="main-content-container">
             <div className="header">
-                <span className="user-name">Hi, {user.name || 'Attendant'}!</span>
+                <span className="user-name">Zoom Attendant</span>
                 <div className="tab-bar">
                     <NavBar
                         user={user}
@@ -154,18 +173,77 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                         tabs={availableTabs}
                     />
                 </div>
-                {/* <button onClick={() => {
-                    if (zoomConnected) {
-                        disconnectZoom(); // Disconnect if already connected
-                    } else {
-                        setShowZoomForm(true); // Show form to connect if not connected
-                    }
-                }}>
-                    {zoomConnected ? "Disconnect Zoom" : "Connect Zoom"}
-                </button> */}
-                <button className="logout-button" onClick={onLogout}>
-                    Logout
-                </button>
+                <div style={{ position: 'relative' }} ref={accountMenuRef}>
+                    <button
+                        onClick={() => setShowAccountMenu(!showAccountMenu)}
+                        style={{
+                            padding: '8px',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            fontSize: '24px',
+                            transition: 'background-color 0.3s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '40px',
+                            height: '40px'
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+                    >
+                        👤
+                    </button>
+                    {showAccountMenu && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                right: 0,
+                                top: '50px',
+                                backgroundColor: '#fff',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                minWidth: '200px',
+                                zIndex: 1000,
+                                padding: '8px 0'
+                            }}
+                        >
+                            <div style={{ padding: '12px 16px', borderBottom: '1px solid #e5e7eb' }}>
+                                <div style={{ fontWeight: 'bold', fontSize: '14px', color: '#333' }}>
+                                    {user.name || 'Attendant'}
+                                </div>
+                                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                    {user.email || ''}
+                                </div>
+                            </div>
+                            <button
+                                className="logout-button"
+                                onClick={() => {
+                                    setShowAccountMenu(false);
+                                    onLogout();
+                                }}
+                                style={{
+                                    width: '100%',
+                                    textAlign: 'left',
+                                    padding: '12px 16px',
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    borderRadius: 0,
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    color: '#333',
+                                    transition: 'background-color 0.2s'
+                                }}
+                                onMouseOver={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                                onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {showZoomForm && (
