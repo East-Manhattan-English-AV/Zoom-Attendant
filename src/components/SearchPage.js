@@ -202,19 +202,20 @@ function SearchPage({ userAccess }) {
                         type="button"
                         onClick={handleAddParticipant}
                         style={{
-                            padding: '12px 16px',
+                            padding: '10px',
                             backgroundColor: 'transparent',
                             color: 'black',
                             border: 'none',
-                            borderRadius: '25px',
-                            fontSize: '20px',
+                            borderRadius: '50%',
+                            fontSize: '28px',
                             fontWeight: '500',
                             cursor: 'pointer',
                             transition: 'all 0.2s',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            minWidth: '48px'
+                            width: '48px',
+                            height: '48px'
                         }}
                         onMouseOver={(e) => {
                             e.target.style.backgroundColor = '#a9adb2';
