@@ -59,7 +59,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                             <div id="meetingSDKChatElement"></div>
                         </div>
                         <div className="search-view">
-                            <SearchPage user={user} />
+                            <SearchPage user={user} userAccess={userAccess} />
                         </div>
                     </div>
                 );

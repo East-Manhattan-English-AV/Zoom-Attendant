@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import db from '../firebaseConfig';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import EditParticipant from './EditParticipant';
 
-function SearchPage() {
+function SearchPage({ userAccess }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [allParticipants, setAllParticipants] = useState([]); // Store all participants
     const [filteredParticipants, setFilteredParticipants] = useState([]); // Store filtered participants
     const [error, setError] = useState('');
+    const [selectedParticipant, setSelectedParticipant] = useState(null);
+    const [isEditingParticipant, setIsEditingParticipant] = useState(false);
 
     useEffect(() => {
         const fetchAllParticipants = async () => {
@@ -84,6 +87,37 @@ function SearchPage() {
         );
     };
 
+    // Handle participant row click to navigate to edit view (only if user is admin)
+    const handleParticipantClick = (participant) => {
+        if (userAccess === 'admin') {
+            setSelectedParticipant(participant);
+            setIsEditingParticipant(true);
+        }
+    };
+
+    // Navigate back to search list
+    const handleBackToSearch = () => {
+        setSelectedParticipant(null);
+        setIsEditingParticipant(false);
+    };
+
+    // Callback after updating participant
+    const handleParticipantUpdate = () => {
+        handleBackToSearch();
+        // Participants list updates automatically via onSnapshot
+    };
+
+    // Render edit view if editing, otherwise render search view
+    if (isEditingParticipant && selectedParticipant) {
+        return (
+            <EditParticipant
+                participant={selectedParticipant}
+                onCancel={handleBackToSearch}
+                onUpdate={handleParticipantUpdate}
+            />
+        );
+    }
+
     return (
         <div className="search-container">
             <form onSubmit={(e) => e.preventDefault()}>
@@ -101,7 +135,12 @@ function SearchPage() {
                 {filteredParticipants.length > 0 ? (
                     <ul className="participant-list">
                         {filteredParticipants.map((p) => (
-                            <li key={p.id} className="participant-item">
+                            <li
+                                key={p.id}
+                                className="participant-item"
+                                onClick={() => handleParticipantClick(p)}
+                                style={{ cursor: userAccess === 'admin' ? 'pointer' : 'default' }}
+                            >
                                 <div className="participant-header">
                                     <span className="participant-name">
                                         {highlightText(p.name || '', searchTerm)}

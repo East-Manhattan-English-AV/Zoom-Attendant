@@ -3,64 +3,62 @@ import { doc, updateDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
 function EditAttendant({ attendant, onCancel, onUpdate }) {
-    const [formData, setFormData] = useState({
+    const [editingAttendant, setEditingAttendant] = useState({
         name: '',
         email: '',
         access: 'none'
     });
 
-    // Synchronize formData with the attendant prop only when the ID changes
+    // Update editing state when the attendant prop changes
     useEffect(() => {
-        if (attendant?.id) {
-            setFormData({
+        if (attendant) {
+            setEditingAttendant({
                 name: attendant.name || '',
                 email: attendant.email || '',
                 access: attendant.access || 'none'
             });
         }
-    }, [attendant?.id]);
+    }, [attendant]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
+    // Handle form submission: update the attendant in Firestore
     const handleSubmit = async () => {
         if (!attendant?.id) return;
-
+        const attendantRef = doc(db, 'authorizedUsers', attendant.id);
         try {
-            const attendantRef = doc(db, 'authorizedUsers', attendant.id);
-            await updateDoc(attendantRef, formData);
-            onUpdate?.();
+            await updateDoc(attendantRef, editingAttendant);
+            if (onUpdate) onUpdate(); // Callback for successful update
         } catch (error) {
             console.error('Error updating attendant:', error);
         }
     };
 
     return (
-        <form className="edit-attendant-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="form-group">
-                <label htmlFor="attendant-name">Name</label>
-                <input
-                    type="text"
-                    id="attendant-name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter name"
-                />
+        <div>
+            <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900">Edit Attendant</h2>
             </div>
+            <form className="edit-attendant-form p-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="form-group">
+                    <label htmlFor="attendant-name">Name</label>
+                    <input
+                        type="text"
+                        id="attendant-name"
+                        value={editingAttendant.name}
+                        onChange={(e) =>
+                            setEditingAttendant({ ...editingAttendant, name: e.target.value })
+                        }
+                        placeholder="Enter name"
+                    />
+                </div>
             <div className="form-group">
                 <label htmlFor="attendant-email">Email</label>
                 <input
                     type="email"
                     id="attendant-email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={editingAttendant.email}
+                    onChange={(e) =>
+                        setEditingAttendant({ ...editingAttendant, email: e.target.value })
+                    }
                     placeholder="Enter email"
                 />
             </div>
@@ -68,9 +66,10 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
                 <label htmlFor="attendant-access">Access</label>
                 <select
                     id="attendant-access"
-                    name="access"
-                    value={formData.access}
-                    onChange={handleChange}
+                    value={editingAttendant.access}
+                    onChange={(e) =>
+                        setEditingAttendant({ ...editingAttendant, access: e.target.value })
+                    }
                 >
                     <option value="none">None</option>
                     <option value="basic">Basic</option>
@@ -98,7 +97,8 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
                     Submit
                 </button>
             </div>
-        </form>
+            </form>
+        </div>
     );
 }
 
