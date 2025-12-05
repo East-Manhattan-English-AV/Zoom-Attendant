@@ -309,12 +309,12 @@ button:hover {
   transition: background-color 0.3s;
 } */
  .logout-button {
-   padding: 8px 16px;
+   padding: 10px 24px;
    font-size: 14px;
    color: black;
    background-color: white;
    border: none;
-   border-radius: 8px;
+   border-radius: 25px;
    cursor: pointer;
    transition: background-color 0.3s;
  }
