@@ -107,6 +107,10 @@ function SearchPage({ userAccess }) {
         // Participants list updates automatically via onSnapshot
     };
 
+    // Clear search text
+    const clearSearch = () => {
+        setSearchTerm('');
+    };
     // Render edit view if editing, otherwise render search view
     if (isEditingParticipant && selectedParticipant) {
         return (
@@ -121,13 +125,38 @@ function SearchPage({ userAccess }) {
     return (
         <div className="search-container">
             <form onSubmit={(e) => e.preventDefault()}>
-                <div className="search-input-container">
+                <div className="search-input-container" style={{ position: 'relative' }}>
                     <input
                         type="text"
                         placeholder="Search Participants…"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ paddingRight: searchTerm ? '40px' : '12px' }}
                     />
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={clearSearch}
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '20px',
+                                color: '#6b7280',
+                                padding: '0 5px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                            aria-label="Clear search"
+                        >
+                            ✕
+                        </button>
+                    )}
                 </div>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
