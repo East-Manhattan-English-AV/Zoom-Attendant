@@ -211,7 +211,17 @@ function SearchPage({ userAccess }) {
                         ))}
                     </ul>
                 ) : (
-                    <p>Nothing to show…</p>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '300px',
+                        textAlign: 'center',
+                        color: '#6b7280',
+                        fontSize: '16px'
+                    }}>
+                        <p>No results. Check your entry or suggest an entry for review</p>
+                    </div>
                 )}
             </div>
         </div>
