@@ -8,7 +8,7 @@ import AttendantsPage from './AttendantsPage';
 
 const MainContent = ({ user, userAccess, onLogout }) => {
     const allTabs = [
-        { key: 'search', label: 'Search' },
+        { key: 'search', label: 'Participants' },
         { key: 'attendants', label: 'Attendants' },
         { key: 'admin', label: 'Admin' },
         { key: 'advanced', label: 'Advanced' },
