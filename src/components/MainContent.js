@@ -59,7 +59,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                             <div id="meetingSDKChatElement"></div>
                         </div>
                         <div className="search-view">
-                            <SearchPage user={user} />
+                            <SearchPage user={user} userAccess={userAccess} />
                         </div>
                     </div>
                 );
@@ -161,7 +161,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                         tabs={availableTabs}
                     />
                 </div>
-                <button onClick={() => {
+                {/* <button onClick={() => {
                     if (zoomConnected) {
                         disconnectZoom(); // Disconnect if already connected
                     } else {
@@ -169,7 +169,7 @@ const MainContent = ({ user, userAccess, onLogout }) => {
                     }
                 }}>
                     {zoomConnected ? "Disconnect Zoom" : "Connect Zoom"}
-                </button>
+                </button> */}
                 <button className="logout-button" onClick={onLogout}>
                     Logout
                 </button>

@@ -1,87 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
-function EditParticipant({ participant, onCancel, onUpdate }) {
-    const [editingParticipant, setEditingParticipant] = useState({
-        name: '',
+function AddParticipant({ initialName = '', userAccess, onCancel, onUpdate }) {
+    const [newParticipant, setNewParticipant] = useState({
+        name: initialName,
         device: '',
         phone: '',
         notes: '',
         overseer: '',
         allow: true
     });
-    const [originalParticipant, setOriginalParticipant] = useState(null);
-    const [hasChanges, setHasChanges] = useState(false);
 
-    // Update editing state when the participant prop changes
-    useEffect(() => {
-        if (participant) {
-            const initial = {
-                name: participant.name || '',
-                device: participant.device || '',
-                phone: participant.phone || '',
-                notes: participant.notes || '',
-                overseer: participant.overseer || '',
-                allow: participant.allow !== undefined ? participant.allow : true
-            };
-            setEditingParticipant(initial);
-            setOriginalParticipant(initial);
-        }
-    }, [participant]);
+    const isAdmin = userAccess === 'admin';
 
-    // Detect changes
-    useEffect(() => {
-        if (originalParticipant) {
-            const changed =
-                editingParticipant.name !== originalParticipant.name ||
-                editingParticipant.device !== originalParticipant.device ||
-                editingParticipant.phone !== originalParticipant.phone ||
-                editingParticipant.notes !== originalParticipant.notes ||
-                editingParticipant.overseer !== originalParticipant.overseer ||
-                editingParticipant.allow !== originalParticipant.allow;
-            setHasChanges(changed);
-        }
-    }, [editingParticipant, originalParticipant]);
+    // Check if any field has content
+    const hasContent =
+        newParticipant.name.trim() !== '' ||
+        newParticipant.device.trim() !== '' ||
+        newParticipant.phone.trim() !== '' ||
+        newParticipant.notes.trim() !== '' ||
+        newParticipant.overseer.trim() !== '';
 
-    // Handle form submission: update the participant in Firestore
+    // Handle form submission: add new participant to Firestore
     const handleSubmit = async () => {
-        if (!participant?.id) return;
-        const participantRef = doc(db, 'participants', participant.id);
-        try {
-            await updateDoc(participantRef, editingParticipant);
-            if (onUpdate) onUpdate(); // Callback for successful update
-        } catch (error) {
-            console.error('Error updating participant:', error);
-        }
-    };
-
-    // Handle delete: move participant to deletedParticipants collection
-    const handleDelete = async () => {
-        if (!participant?.id) return;
-
-        // Show confirmation dialog
-        const confirmDelete = window.confirm(
-            `Are you sure you want to delete ${participant.name || 'this participant'}? This action will move them to the deleted participants collection.`
-        );
-
-        if (!confirmDelete) return;
+        if (!hasContent) return;
 
         try {
-            // Copy the participant data to deletedParticipants collection
-            const deletedParticipantRef = doc(db, 'deletedParticipants', participant.id);
-            await setDoc(deletedParticipantRef, {
-                ...participant,
-                deletedAt: new Date().toISOString()
-            });
+            // Add to different collections based on user access
+            const collectionName = isAdmin ? 'participants' : 'suggestedParticipants';
+            const collectionRef = collection(db, collectionName);
 
-            // Delete from participants collection
-            const participantRef = doc(db, 'participants', participant.id);
-            await deleteDoc(participantRef);
+            // Add timestamp and status for suggestions
+            const dataToAdd = isAdmin
+                ? newParticipant
+                : { ...newParticipant, suggestedAt: new Date().toISOString(), status: 'pending' };
 
-            if (onUpdate) onUpdate(); // Navigate back after deletion
+            await addDoc(collectionRef, dataToAdd);
+            if (onUpdate) onUpdate(); // Navigate back after adding
         } catch (error) {
-            console.error('Error deleting participant:', error);
+            console.error('Error adding participant:', error);
         }
     };
 
@@ -90,7 +48,7 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
             {/* Scrollable content area */}
             <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '80px' }}>
                 <h2 style={{ padding: '20px', fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-                    Edit Participant
+                    {isAdmin ? 'Add New Participant' : 'Suggest New Participant'}
                 </h2>
                 <form className="edit-attendant-form" style={{ padding: '0 20px' }} onSubmit={(e) => e.preventDefault()}>
                     <div className="form-group">
@@ -98,9 +56,9 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                         <input
                             type="text"
                             id="participant-name"
-                            value={editingParticipant.name}
+                            value={newParticipant.name}
                             onChange={(e) =>
-                                setEditingParticipant({ ...editingParticipant, name: e.target.value })
+                                setNewParticipant({ ...newParticipant, name: e.target.value })
                             }
                             placeholder="Enter name"
                             style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
@@ -111,9 +69,9 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                         <input
                             type="text"
                             id="participant-device"
-                            value={editingParticipant.device}
+                            value={newParticipant.device}
                             onChange={(e) =>
-                                setEditingParticipant({ ...editingParticipant, device: e.target.value })
+                                setNewParticipant({ ...newParticipant, device: e.target.value })
                             }
                             placeholder="Enter device"
                             style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
@@ -124,9 +82,9 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                         <input
                             type="tel"
                             id="participant-phone"
-                            value={editingParticipant.phone}
+                            value={newParticipant.phone}
                             onChange={(e) =>
-                                setEditingParticipant({ ...editingParticipant, phone: e.target.value })
+                                setNewParticipant({ ...newParticipant, phone: e.target.value })
                             }
                             placeholder="Enter phone"
                             style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
@@ -137,9 +95,9 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                         <input
                             type="text"
                             id="participant-overseer"
-                            value={editingParticipant.overseer}
+                            value={newParticipant.overseer}
                             onChange={(e) =>
-                                setEditingParticipant({ ...editingParticipant, overseer: e.target.value })
+                                setNewParticipant({ ...newParticipant, overseer: e.target.value })
                             }
                             placeholder="Enter overseer"
                             style={{ backgroundColor: '#f0edee', color: '#000000', borderRadius: '25px', border: 'none', padding: '12px', fontSize: '16px' }}
@@ -149,9 +107,9 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                         <label htmlFor="participant-notes">Notes</label>
                         <textarea
                             id="participant-notes"
-                            value={editingParticipant.notes}
+                            value={newParticipant.notes}
                             onChange={(e) =>
-                                setEditingParticipant({ ...editingParticipant, notes: e.target.value })
+                                setNewParticipant({ ...newParticipant, notes: e.target.value })
                             }
                             placeholder="Enter notes"
                             rows="4"
@@ -163,9 +121,9 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                             <input
                                 type="checkbox"
                                 id="participant-allow"
-                                checked={editingParticipant.allow}
+                                checked={newParticipant.allow}
                                 onChange={(e) =>
-                                    setEditingParticipant({ ...editingParticipant, allow: e.target.checked })
+                                    setNewParticipant({ ...newParticipant, allow: e.target.checked })
                                 }
                                 style={{ marginRight: '8px' }}
                             />
@@ -173,29 +131,6 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                         </label>
                     </div>
                 </form>
-
-                {/* Delete button - centered above bottom bar */}
-                <div style={{ padding: '20px', textAlign: 'center', marginTop: '20px' }}>
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        style={{
-                            padding: '10px 24px',
-                            backgroundColor: '#dc2626',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '25px',
-                            fontSize: '16px',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.2s'
-                        }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
-                    >
-                        Delete Participant
-                    </button>
-                </div>
             </div>
 
             {/* Fixed bottom button bar */}
@@ -232,24 +167,24 @@ function EditParticipant({ participant, onCancel, onUpdate }) {
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={!hasChanges}
+                    disabled={!hasContent}
                     style={{
                         padding: '10px 24px',
-                        backgroundColor: hasChanges ? '#2563eb' : '#d1d5db',
-                        color: hasChanges ? '#ffffff' : '#9ca3af',
+                        backgroundColor: hasContent ? '#2563eb' : '#d1d5db',
+                        color: hasContent ? '#ffffff' : '#9ca3af',
                         border: 'none',
                         borderRadius: '25px',
                         fontSize: '16px',
                         fontWeight: '500',
-                        cursor: hasChanges ? 'pointer' : 'not-allowed',
+                        cursor: hasContent ? 'pointer' : 'not-allowed',
                         transition: 'all 0.2s'
                     }}
                 >
-                    Submit
+                    {isAdmin ? 'Add Participant' : 'Suggest'}
                 </button>
             </div>
         </div>
     );
 }
 
-export default EditParticipant;
+export default AddParticipant;
