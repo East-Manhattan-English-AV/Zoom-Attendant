@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import db from '../firebaseConfig';
 
 function EditAttendant({ attendant, onCancel, onUpdate }) {
+    const auth = getAuth();
     const [editingAttendant, setEditingAttendant] = useState({
         name: '',
         email: '',
@@ -10,6 +12,7 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
     });
     const [originalAttendant, setOriginalAttendant] = useState(null);
     const [hasChanges, setHasChanges] = useState(false);
+    const [resetMessage, setResetMessage] = useState('');
 
     // Update editing state when the attendant prop changes
     useEffect(() => {
@@ -81,6 +84,31 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
         }
     };
 
+    // Handle password reset: send password reset email
+    const handlePasswordReset = async () => {
+        if (!editingAttendant.email) {
+            setResetMessage('No email address available');
+            return;
+        }
+
+        // Show confirmation dialog
+        const confirmReset = window.confirm(
+            `Send password reset email to ${editingAttendant.email}?`
+        );
+
+        if (!confirmReset) return;
+
+        try {
+            await sendPasswordResetEmail(auth, editingAttendant.email);
+            setResetMessage('Password reset email sent successfully!');
+            setTimeout(() => setResetMessage(''), 5000); // Clear message after 5 seconds
+        } catch (error) {
+            console.error('Error sending password reset email:', error);
+            setResetMessage(`Error: ${error.message}`);
+            setTimeout(() => setResetMessage(''), 5000);
+        }
+    };
+
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Scrollable content area */}
@@ -133,27 +161,57 @@ function EditAttendant({ attendant, onCancel, onUpdate }) {
                     </div>
                 </form>
 
-                {/* Delete button - centered above bottom bar */}
+                {/* Action buttons - centered above bottom bar */}
                 <div style={{ padding: '20px', textAlign: 'center', marginTop: '20px' }}>
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        style={{
-                            padding: '10px 24px',
-                            backgroundColor: '#dc2626',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '25px',
-                            fontSize: '16px',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.2s'
-                        }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
-                    >
-                        Delete Attendant
-                    </button>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                        <button
+                            type="button"
+                            onClick={handlePasswordReset}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#2563eb',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '25px',
+                                fontSize: '16px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#2563eb'}
+                        >
+                            Send Password Reset Email
+                        </button>
+                        {resetMessage && (
+                            <p style={{
+                                fontSize: '14px',
+                                color: resetMessage.includes('Error') ? '#dc2626' : '#10b981',
+                                margin: 0
+                            }}>
+                                {resetMessage}
+                            </p>
+                        )}
+                        <button
+                            type="button"
+                            onClick={handleDelete}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#dc2626',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '25px',
+                                fontSize: '16px',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+                        >
+                            Delete Attendant
+                        </button>
+                    </div>
                 </div>
             </div>
 
