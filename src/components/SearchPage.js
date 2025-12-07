@@ -3,6 +3,7 @@ import db from '../firebaseConfig';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import EditParticipant from './EditParticipant';
 import AddParticipant from './AddParticipant';
+import SuggestedParticipantsPage from './SuggestedParticipantsPage';
 
 function SearchPage({ userAccess }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +13,8 @@ function SearchPage({ userAccess }) {
     const [selectedParticipant, setSelectedParticipant] = useState(null);
     const [isEditingParticipant, setIsEditingParticipant] = useState(false);
     const [isAddingParticipant, setIsAddingParticipant] = useState(false);
+    const [isViewingSuggested, setIsViewingSuggested] = useState(false);
+    const [pendingSuggestedCount, setPendingSuggestedCount] = useState(0);
 
     useEffect(() => {
         const fetchAllParticipants = async () => {
@@ -35,6 +38,21 @@ function SearchPage({ userAccess }) {
 
         fetchAllParticipants();
     }, []);
+
+    // Fetch pending suggested participants count (admin only)
+    useEffect(() => {
+        if (userAccess !== 'admin') return;
+
+        const q = query(collection(db, "suggestedParticipants"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const pendingCount = querySnapshot.docs.filter(
+                doc => doc.data().status === 'pending'
+            ).length;
+            setPendingSuggestedCount(pendingCount);
+        });
+
+        return () => unsubscribe();
+    }, [userAccess]);
 
     // Filter participants based on the search term
     useEffect(() => {
@@ -102,6 +120,7 @@ function SearchPage({ userAccess }) {
         setSelectedParticipant(null);
         setIsEditingParticipant(false);
         setIsAddingParticipant(false);
+        setIsViewingSuggested(false);
     };
 
     // Navigate to add participant view
@@ -127,6 +146,15 @@ function SearchPage({ userAccess }) {
             clearSearch();
         }
     };
+
+    // Render suggested participants view if viewing
+    if (isViewingSuggested) {
+        return (
+            <SuggestedParticipantsPage
+                onBack={handleBackToSearch}
+            />
+        );
+    }
 
     // Render add participant view if adding
     if (isAddingParticipant) {
@@ -239,6 +267,25 @@ function SearchPage({ userAccess }) {
                     </p>
                 )}
             </form>
+            {userAccess === 'admin' && pendingSuggestedCount > 0 && (
+                <div style={{ padding: '10px', paddingTop: '0' }}>
+                    <button
+                        type="button"
+                        onClick={() => setIsViewingSuggested(true)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#2563eb',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                            padding: 0
+                        }}
+                    >
+                        Review suggested participants here ({pendingSuggestedCount} pending)
+                    </button>
+                </div>
+            )}
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <div className="results">
                 {filteredParticipants.length > 0 ? (
