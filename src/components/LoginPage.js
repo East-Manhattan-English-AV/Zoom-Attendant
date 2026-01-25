@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, setDoc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
 function LoginPage() {
@@ -70,6 +70,7 @@ function LoginPage() {
 
             const validatedSnapshot = await getDocs(validatedQuery);
             const isPreValidated = !validatedSnapshot.empty;
+            const validatedDocId = isPreValidated ? validatedSnapshot.docs[0].id : null;
 
             const userCredential = await createUserWithEmailAndPassword(auth, loginData.email, loginData.password);
 
@@ -96,6 +97,9 @@ function LoginPage() {
                     acceptedOn: new Date(),
                     acceptedBy: 'System (Auto-validated)'
                 });
+
+                // Delete from validatedPendingAttendants since registration is complete
+                await deleteDoc(doc(db, 'validatedPendingAttendants', validatedDocId));
 
                 setLoading(false);
                 setError('Registration successful! You can now log in.');
